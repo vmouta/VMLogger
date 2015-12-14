@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'VMLogger_Example', :exclusive => true do
+  pod "VMLogger", :path => "../"
+end
+
+target 'VMLogger_Tests', :exclusive => true do
+  pod "VMLogger", :path => "../"
+
+  pod 'FBSnapshotTestCase'
+end
