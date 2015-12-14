@@ -1,0 +1,30 @@
+{
+  "name": "VMLogger",
+  "version": "0.1.0",
+  "summary": "A simple debug log BackLog kind Logger.",
+  "description": "Provides an extensible Swift-based logging API that is simple, lightweight and performant.\nBased on CleanroomLogger and XCGLogger",
+  "homepage": "https://github.com/vmouta/VMLogger",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "Vasco Mouta": "vasco.mouta@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/vmouta/VMLogger.git",
+    "tag": "0.1.0"
+  },
+  "social_media_url": "https://twitter.com/vmouta",
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": "Pod/Classes/**/*",
+  "frameworks": "Foundation",
+  "dependencies": {
+    "Alamofire": [
+      "~> 3.1.2"
+    ]
+  }
+}
