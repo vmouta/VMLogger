@@ -17,6 +17,10 @@
  */
 import Foundation
 
+struct LogFilterConstants {
+    static let Class: String = "class"
+}
+
 /**
 Before a `LogEntry` is recorded, any `LogFilter`s specified in the active
 `LogConfiguration` are given a chance to prevent the entry from being recorded
@@ -32,4 +36,13 @@ public protocol LogFilter
     :returns:   `true` if `entry` should be recorded, `false` if not.
     */
     func shouldRecordLogEntry(entry: LogEntry) -> Bool
+    
+    /**
+     constructor to be used by introspection
+     
+     - parameter configuration: configuration for the appender
+     
+     - returns: if configuration is correct a new LogFilter
+     */
+    init?(configuration: Dictionary<String, AnyObject>)
 }

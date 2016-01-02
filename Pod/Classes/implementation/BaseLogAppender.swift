@@ -56,6 +56,53 @@ public class BaseLogAppender: LogAppender
         self.queue = dispatch_queue_create(name, DISPATCH_QUEUE_SERIAL)
         self.filters = filters
     }
+    
+    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+        if let config = self.dynamicType.configuration(configuration) {
+            self.init(name:config.name, formatters:config.formatters, filters:config.filters)
+        } else {
+            return nil
+        }
+    }
+    
+    public class func configuration(configuration: Dictionary<String, AnyObject>) -> (name: String, formatters: [LogFormatter], filters: [LogFilter])?  {
+        if let name = configuration[LogAppenderConstants.Name] as? String {
+            var returnConfig:(name: String, formatters: [LogFormatter], filters: [LogFilter])
+            returnConfig.name = name
+            
+            /// Appender Encoders
+            returnConfig.formatters = []
+            if let encodersConfig = configuration[LogAppenderConstants.Encoders] as? Dictionary<String, AnyObject> {
+                if let patternsConfig = encodersConfig[PatternLogFormatterConstants.Pattern] as? Array<String> {
+                    for pattern in patternsConfig {
+                        if(pattern.isEmpty) {
+                            returnConfig.formatters.append(PatternLogFormatter())
+                        } else {
+                            returnConfig.formatters.append(PatternLogFormatter(logFormat: pattern))
+                        }
+                    }
+                }
+            } else {
+                returnConfig.formatters.append(DefaultLogFormatter())
+            }
+            /// Appender Filters
+            returnConfig.filters = []
+            if let filtersConfig = configuration[LogAppenderConstants.Filters] as? Array<Dictionary<String, AnyObject> > {
+                for filterConfig in filtersConfig {
+                    if let className = filterConfig[LogFilterConstants.Class] as? String {
+                        if let swiftClass = NSClassFromString(className) as? LogFilter.Type {
+                            if let filter = swiftClass.init(configuration: filterConfig) {
+                                returnConfig.filters.append(filter)
+                            }
+                        }
+                    }
+                }
+            }
+            return returnConfig
+        } else {
+            return nil
+        }
+    }
 
     /**
     This implementation does nothing. Subclasses must override this function

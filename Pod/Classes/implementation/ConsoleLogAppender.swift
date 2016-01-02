@@ -18,6 +18,10 @@
 
 import Foundation
 
+struct ConoleLogAppenderConstants {
+    static let Colors: String = "colors"
+}
+
 // MARK: - XCGConsoleLogDestination
 // - A standard log destination that outputs log details to the console
 public class ConsoleLogAppender: BaseLogAppender {
@@ -39,9 +43,18 @@ public class ConsoleLogAppender: BaseLogAppender {
         self.init(name: ConsoleLogAppender.CONSOLE_IDENTIFIER)
     }
     
-    public init(name: String, formatters: [LogFormatter] = [DefaultLogFormatter()], xcodeColorsEnabled: Bool = false) {
+    public init(name: String, formatters: [LogFormatter] = [DefaultLogFormatter()], filters: [LogFilter] = [], xcodeColorsEnabled: Bool = false) {
         super.init(name: name, formatters: formatters)
         self.xcodeColorsEnabled = xcodeColorsEnabled
+    }
+
+    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+        if let config = self.dynamicType.configuration(configuration) {
+            let colors = (configuration[ConoleLogAppenderConstants.Colors] as?  Bool) ?? false
+            self.init(name:config.name, formatters:config.formatters, filters:config.filters, xcodeColorsEnabled:colors)
+        } else {
+            return nil
+        }
     }
     
     // MARK: - Misc Methods
@@ -50,11 +63,9 @@ public class ConsoleLogAppender: BaseLogAppender {
         let adjustedText: String
         if let xcodeColor = (xcodeColors ?? xcodeColors)[entry.logLevel] where xcodeColorsEnabled {
             adjustedText = "\(xcodeColor.format())\(message)\(XcodeColor.reset)"
-        }
-        else {
+        } else {
             adjustedText = message
         }
-        
-        print("\(adjustedText)")
+        print(adjustedText)
     }
 }

@@ -10,6 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    public static let logger = AppLogger.logger(NSStringFromClass(ViewController.classForCoder()))
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.

@@ -18,6 +18,13 @@
 
 import Foundation
 
+struct LogConfigurationConstants {
+    static let Appenders: String = "appenders"
+    static let Level: String = "level"
+    static let Synchronous: String = "synchronous"
+    static let Additivity: String = "additivity"
+}
+
 /**
 Defines an interface for specifying the configuration of the logging system.
 */
@@ -44,11 +51,13 @@ public protocol LogConfiguration: CustomDebugStringConvertible
     
     var children: [LogConfiguration] { get }
     
-    func addChildren(child: LogConfiguration)
+    func addChildren(child: LogConfiguration, copyGrandChildren:Bool)
     
     func getChildren(name: String) -> LogConfiguration?
     
     func fullName() -> String
     
     func details() -> String
+    
+    func setParent(parent: LogConfiguration)
 }

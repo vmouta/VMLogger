@@ -17,7 +17,16 @@
  */
 
 import Foundation
-    
+
+private let AllString: String = "All"
+private let VerboseString: String = "Verbose"
+private let DebugString: String = "Debug"
+private let InfoString: String = "Info"
+private let WarningString: String = "Warning"
+private let ErrorString: String = "Error"
+private let SevereString: String = "Severe"
+private let OffString: String = "OFF"
+
 // MARK: - Enums
 public enum LogLevel: Int, Comparable, CustomStringConvertible {
 
@@ -52,24 +61,44 @@ public enum LogLevel: Int, Comparable, CustomStringConvertible {
     /** turn OFF all logging (children can override) */
     case Off        = 7
     
+    public init(level: String = InfoString) {
+        if(AllString.caseInsensitiveCompare(level) == NSComparisonResult.OrderedSame) {
+            self = .All
+        } else if(VerboseString.caseInsensitiveCompare(level) == NSComparisonResult.OrderedSame) {
+            self = .Verbose
+        } else if(DebugString.caseInsensitiveCompare(level) == NSComparisonResult.OrderedSame) {
+            self = .Debug
+        } else if(InfoString.caseInsensitiveCompare(level) == NSComparisonResult.OrderedSame) {
+            self = .Info
+        } else if(WarningString.caseInsensitiveCompare(level) == NSComparisonResult.OrderedSame) {
+            self = .Warning
+        } else if(ErrorString.caseInsensitiveCompare(level) == NSComparisonResult.OrderedSame) {
+            self = .Error
+        } else if(SevereString.caseInsensitiveCompare(level) == NSComparisonResult.OrderedSame) {
+            self = .Severe
+        } else {
+            self = .Off
+        }
+    }
+    
     public var description: String {
         switch self {
         case .All:
-            return "ALL"
+            return AllString
         case .Verbose:
-            return "Verbose"
+            return VerboseString
         case .Debug:
-            return "Debug"
+            return DebugString
         case .Info:
-            return "Info"
+            return InfoString
         case .Warning:
-            return "Warning"
+            return WarningString
         case .Error:
-            return "Error"
+            return ErrorString
         case .Severe:
-            return "Severe"
+            return SevereString
         case .Off:
-            return "OFF"
+            return OffString
         }
     }
 }

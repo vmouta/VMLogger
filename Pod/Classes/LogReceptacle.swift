@@ -43,7 +43,7 @@ public final class LogReceptacle
             var config: LogConfiguration
             repeat {
                 config = logger!
-                if (entry.logLevel>=config.effectiveLevel) || (config.effectiveLevel == LogLevel.Off && config.identifier != entry.logger.identifier) {
+                if ((entry.logLevel>=config.effectiveLevel) || (config.effectiveLevel == LogLevel.Off && config.identifier != entry.logger.identifier)) {
                     for appender in config.appenders {
                         if self.logEntry(entry, passesFilters: appender.filters) {
                             let recordDispatcher = self.dispatcherForQueue(appender.queue, synchronous: synchronous)
@@ -57,8 +57,12 @@ public final class LogReceptacle
                             }
                         }
                     }
+                    logger = config.parent
+                } else if config.identifier != entry.logger.identifier {
+                    logger = config.parent
+                } else {
+                    logger = nil
                 }
-                logger = config.parent
             } while(config.additivity == true && logger != nil)
         }
     }

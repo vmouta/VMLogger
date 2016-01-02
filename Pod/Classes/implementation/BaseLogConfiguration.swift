@@ -53,17 +53,20 @@ public class BaseLogConfiguration: LogConfiguration
     
     public var parent: LogConfiguration?
     
-    public lazy var children: [LogConfiguration] = []
-    
-    public convenience init(identifier: String, parent: LogConfiguration, appenders: [LogAppender] = [], filters: [LogFilter] = [], synchronousMode: Bool = false, additivity: Bool = true)
-    {
-        self.init(identifier: identifier, effectiveLevel: parent.effectiveLevel, parent: parent, appenders: appenders, filters: filters, synchronousMode: synchronousMode, additivity: additivity)
+    public var children: [LogConfiguration] {
+        return Array(childrenDic.values)
     }
     
-    public convenience init(identifier: String, assignedLevel: LogLevel = .Info, parent: LogConfiguration, appenders: [LogAppender], filters: [LogFilter] = [], synchronousMode: Bool = false, additivity: Bool = true)
+    internal var childrenDic: [String : LogConfiguration] = [:]
+    
+    public convenience init(identifier: String, parent: LogConfiguration, appenders: [LogAppender] = [], synchronousMode: Bool = false, additivity: Bool = true)
     {
-        self.init(identifier: identifier, effectiveLevel: parent.effectiveLevel, parent: parent, appenders: appenders, filters: filters, synchronousMode: synchronousMode, additivity: additivity)
-        self.assignedLevel = assignedLevel
+        self.init(identifier: identifier, assignedLevel: nil, parent: parent, appenders: appenders, synchronousMode: synchronousMode, additivity: additivity)
+    }
+    
+    public convenience init(identifier: String, assignedLevel: LogLevel?, parent: LogConfiguration, appenders: [LogAppender], synchronousMode: Bool , additivity: Bool)
+    {
+        self.init(identifier: identifier, assignedLevel: assignedLevel, parent: parent, appenders: appenders, synchronousMode: synchronousMode, additivity: additivity)
     }
     
     /**
@@ -79,9 +82,6 @@ public class BaseLogConfiguration: LogConfiguration
     :param:     minimumSeverity The minimum `LogSeverity` supported by the
                 configuration.
     
-    :param:     filters A list of `LogFilter`s to be used for filtering log
-                messages.
-    
     :param:     formatters A list of `LogFormatter`s to be used for formatting
                 log messages.
 
@@ -93,14 +93,15 @@ public class BaseLogConfiguration: LogConfiguration
      
     :param:     additivity
     */
-    internal init(identifier: String, effectiveLevel: LogLevel = .Info, parent: LogConfiguration?, appenders: [LogAppender], filters: [LogFilter] = [], synchronousMode: Bool = false, additivity: Bool = true)
+    internal init(identifier: String, assignedLevel: LogLevel?, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true)
     {
         self.identifier = identifier
-        self.effectiveLevel = effectiveLevel
+        self.additivity = additivity
+        self.assignedLevel = assignedLevel
         self.appenders = appenders
         self.synchronousMode = synchronousMode
-        self.additivity = additivity
         self.parent = parent
+        self.effectiveLevel = assignedLevel ?? parent?.effectiveLevel ??  .Info
     }
     
     internal func isRootLogger() ->Bool {
@@ -108,14 +109,25 @@ public class BaseLogConfiguration: LogConfiguration
         return parent == nil;
     }
     
-    public func addChildren(child: LogConfiguration)
+    // If child already exist the the grandchild of the child to add will be copied
+    public func addChildren(child: LogConfiguration, copyGrandChildren:Bool = true)
     {
-        self.children.append(child)
+        child.setParent(self)
+        if let oldChild = self.childrenDic[child.identifier] where copyGrandChildren == true {
+            for grandChildren in oldChild.children {
+                child.addChildren(grandChildren, copyGrandChildren: false)
+            }
+        }
+        self.childrenDic[child.identifier] = child
     }
     
     public func getChildren(name: String) -> LogConfiguration?
     {
-        return self.children.filter{ $0.identifier == name }.first
+        return self.childrenDic[name]
+    }
+    
+    public func setParent(parent: LogConfiguration) {
+        self.parent = parent
     }
     
     public func fullName() -> String
@@ -138,7 +150,7 @@ public class BaseLogConfiguration: LogConfiguration
             details += "nil - " + self.effectiveLevel.description + " - " + self.fullName()
         }
     
-        for child in self.children {
+        for (_, child) in self.childrenDic {
             details += child.details()
         }
         return details
@@ -147,7 +159,7 @@ public class BaseLogConfiguration: LogConfiguration
     // MARK: - DebugPrintabl
     public var debugDescription: String {
         get {
-            let description: String = "\(Mirror(reflecting:self).subjectType): [\(assignedLevel)-\(effectiveLevel)][\(additivity)] \(identifier) - \r"
+            let description: String = "\(Mirror(reflecting:self).subjectType) [\(assignedLevel)-\(effectiveLevel)][\(additivity)] \(identifier) - \n \(childrenDic)\r"
             return description
         }
     }

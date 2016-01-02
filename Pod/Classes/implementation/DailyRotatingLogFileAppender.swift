@@ -79,6 +79,10 @@ public class DailyRotatingLogFileAppender: BaseLogAppender
         try NSFileManager.defaultManager().createDirectoryAtURL(url, withIntermediateDirectories: true, attributes: nil)
     }
 
+    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+        fatalError("init(configuration:) has not been implemented")
+    }
+
     /**
     Returns a string representing the filename that will be used to store logs
     recorded on the given date.

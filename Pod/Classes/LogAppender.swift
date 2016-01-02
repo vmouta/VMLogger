@@ -18,7 +18,14 @@
 
 import Foundation
 
-// MARK: - AppLoggerProtocol
+struct LogAppenderConstants {
+    static let Name: String = "name"
+    static let Encoders: String = "encoders"
+    static let Filters: String = "filters"
+    static let Class: String = "class"
+}
+
+// MARK: - LogAppender
 // - Protocol for output classes to conform to
 public protocol LogAppender: CustomDebugStringConvertible {
     
@@ -70,4 +77,13 @@ public protocol LogAppender: CustomDebugStringConvertible {
      production code.
      */
     func recordFormattedMessage(message: String, forLogEntry entry: LogEntry, currentQueue: dispatch_queue_t, synchronousMode: Bool)
+    
+    /**
+     constructor to be used by introspection
+     
+     - parameter configuration: configuration for the appender
+     
+     - returns: if configuration is correct a new LogAppender
+     */
+    init?(configuration: Dictionary<String, AnyObject>)
 }

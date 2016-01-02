@@ -7,19 +7,49 @@
 //
 
 import UIKit
-import VMLogger
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    let logger: Log = Log.getLogger(NSStringFromClass(AppDelegate.classForCoder()))
+    let logger = AppLogger.logger(NSStringFromClass(AppDelegate.classForCoder()))
     
     var window: UIWindow?
 
+    override class func initialize() {
+       
+        // Enable default log level
+        //AppLogger.enable()
+        
+        // Set log level manualy
+        //AppLogger.enable("debug")
+        
+        // Set log from default .plist file
+        AppLogger.enableFromFile()
+    }
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        Log.enable(LogLevel.All)
+        
+        //Local Logger
+        logger.verbose()
+        ViewController.logger.verbose("verbose")
+        AppLogger.verbose("verbose")
         logger.debug()
+        ViewController.logger.debug("debug")
+        AppLogger.debug("debug")
+        logger.info()
+        ViewController.logger.info("info")
+        AppLogger.info("info")
+        logger.warning()
+        ViewController.logger.warning("warning")
+        AppLogger.warning("warning")
+        logger.error()
+        ViewController.logger.error("error")
+        AppLogger.error("error")
+        logger.severe()
+        ViewController.logger.severe("severe")
+        AppLogger.severe("severe")
+
         return true
     }
 

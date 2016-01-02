@@ -22,9 +22,16 @@ import Foundation
 // - The main logging class
 public class Log: BaseLogConfiguration {
 
+    private static let LoggerInfoFile: String = "VMLogger-Info"
+    private static let LoggerConfig: String = "LOGGER_CONFIG"
+    private static let LoggerAppenders: String = "LOGGER_APPENDERS"
+    private static let LoggerLevel: String = "LOGGER_LEVEL"
+    private static let LoggerSynchronous: String = "LOGGER_SYNCHRONOUS"
+    private static let Appenders: String = "APPENDERS"
+    
     private static var enableOnce = dispatch_once_t()
     
-    private static var _root: BaseLogConfiguration?
+    private static var _root: RootLogConfiguration?
     
     private static var _severe: LogChannel?
     private static var _error: LogChannel?
@@ -33,7 +40,7 @@ public class Log: BaseLogConfiguration {
     private static var _debug: LogChannel?
     private static var _verbose: LogChannel?
     
-    public static var sharedInstance: BaseLogConfiguration {
+    public static var sharedInstance: LogConfiguration {
         if(_root == nil) {
             start(RootLogConfiguration(), logReceptacle: LogReceptacle())
         }
@@ -50,6 +57,77 @@ public class Log: BaseLogConfiguration {
         case .Error:    return _error
         case .Severe:   return _severe
         default:        return nil
+        }
+    }
+    
+    public static func enableFromFile(fileName: String = Log.LoggerInfoFile) {
+        if let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "plist"), let dict = NSDictionary(contentsOfFile: path) {
+            #if DEBUG
+                var rootLevel: LogLevel = .Debug
+            #else
+                var rootLevel: LogLevel = .Info
+            #endif
+            var rootSynchronous = false
+            var appenders: [String:LogAppender] = [:]
+            var rootAppenders: [LogAppender] = []
+            
+            /// Appenders for the log
+            if let appendersConfig = dict.valueForKey(Log.Appenders) as? Array<Dictionary<String, AnyObject> > {
+                for appenderConfig in appendersConfig {
+                    if let className = appenderConfig[LogAppenderConstants.Class] as? String {
+                        if let swiftClass = NSClassFromString(className) as? LogAppender.Type {
+                            if let appender = swiftClass.init(configuration: appenderConfig) {
+                                appenders[appender.name] = appender
+                            }
+                        }
+                    }
+                }
+            }
+            
+            /// Root Appendes
+            if let rootAppendersConfig = dict.valueForKey(Log.LoggerAppenders) as? Array<String> {
+                for rootAppender in rootAppendersConfig {
+                    if let appender = appenders[rootAppender] {
+                        rootAppenders.append(appender)
+                    }
+                }
+            }
+            /// Root Log Level
+            if let rootLoggerLevel = dict.valueForKey(Log.LoggerLevel) as? String {
+                rootLevel = LogLevel(level: rootLoggerLevel)
+            }
+            // Root synchronous mode
+            if let rootLoggerSynchronous = dict.valueForKey(Log.LoggerSynchronous) as? Bool {
+                rootSynchronous = rootLoggerSynchronous
+            }
+            Log.enable(RootLogConfiguration(assignedLevel:rootLevel, appenders:rootAppenders, synchronousMode:rootSynchronous), minimumSeverity:rootLevel)
+            
+            /// Logs Configuration
+            if let logsConfig = dict.valueForKey(Log.LoggerConfig) as? Dictionary<String, AnyObject> {
+                for (logName, configValue) in logsConfig {
+                    if let configuration = configValue as? Dictionary<String, AnyObject> {
+                        let currentChild = self.getLogger(logName)
+                        if let parent = currentChild.parent {
+                            let newChild = self.init(identifier: currentChild.identifier, parent: parent, allAppenders:appenders, configuration: configuration)
+                            parent.addChildren(newChild!, copyGrandChildren: true)
+                        } else {
+                            // Changing root configuration
+                            // TODO: possibility to reset root configuration
+                        }
+                    } else {
+                        Log.error("Log configuration for \(logName) is not valid. Dictionary<String, Any> is required")
+                    }
+                }
+            }
+        } else {
+            ///  No zucred configuration file, set default values
+            /// Logger Configuration
+            #if DEBUG
+                Log.enable(.Debug)
+            #else
+                Log.enable()
+            #endif
+            Log.error("Log configuration file not found: \(fileName)")
         }
     }
     
@@ -71,13 +149,18 @@ public class Log: BaseLogConfiguration {
      help ensure that messages send prior to hitting a breakpoint
      will appear in the console when the breakpoint is hit.
      */
-    public static func enable(effectiveLevel: LogLevel = .Info, synchronousMode: Bool = false)
+    public static func enable(assignedLevel: LogLevel = .Info, synchronousMode: Bool = false)
     {
-        let root = RootLogConfiguration(assignedLevel: effectiveLevel, appenders:[ConsoleLogAppender()])
+        let root = RootLogConfiguration(assignedLevel: assignedLevel, appenders:[ConsoleLogAppender()], synchronousMode:synchronousMode)
         Log.start(root, logReceptacle: LogReceptacle(), minimumSeverity: root.effectiveLevel)
     }
     
-    private static func start(root: BaseLogConfiguration, logReceptacle: LogReceptacle, minimumSeverity: LogLevel = .Info)
+    public static func enable(root: RootLogConfiguration, minimumSeverity: LogLevel)
+    {
+        Log.start(root, logReceptacle: LogReceptacle(), minimumSeverity: minimumSeverity)
+    }
+    
+    private static func start(root: RootLogConfiguration, logReceptacle: LogReceptacle, minimumSeverity: LogLevel = .Info)
     {
         start( root,
             severeChannel: self.createLogChannelWithSeverity(.Severe, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
@@ -114,7 +197,7 @@ public class Log: BaseLogConfiguration {
      :param:     verboseChannel The `LogChannel` to use for logging messages with
      a `severity` of `.Verbose`.
      */
-    private static func start(root: BaseLogConfiguration, severeChannel severChannel: LogChannel?, errorChannel: LogChannel?, warningChannel: LogChannel?, infoChannel: LogChannel?, debugChannel: LogChannel?, verboseChannel: LogChannel?)
+    private static func start(root: RootLogConfiguration, severeChannel severChannel: LogChannel?, errorChannel: LogChannel?, warningChannel: LogChannel?, infoChannel: LogChannel?, debugChannel: LogChannel?, verboseChannel: LogChannel?)
     {
         dispatch_once(&enableOnce) {
             self._root = root
@@ -135,26 +218,24 @@ public class Log: BaseLogConfiguration {
         return nil
     }
     
-    public static func getLogger(identifier: String) -> Log {
+    public class func getLogger(identifier: String) -> LogConfiguration {
         
         var name = identifier
         var parent: LogConfiguration = Log.sharedInstance
-        var child: Log?
         while (true) {
-            child = parent.getChildren(name) as? Log
-            if child != nil {
-                return child!
+            if let child = parent.getChildren(name) {
+                return child
             } else {
                 var token: [String] = name.componentsSeparatedByString(BaseLogConfiguration.DOT)
                 if token.count == 1 {
-                    let newLogger = Log(identifier: token[0], parent: parent)
-                    parent.addChildren(newLogger)
-                    return newLogger
+                    let child = self.init(identifier: token[0], parent: parent)
+                    parent.addChildren(child, copyGrandChildren: true)
+                    return child
                 } else {
-                    child = parent.getChildren(token[0]) as? Log
+                    var child = parent.getChildren(token[0])
                     if child == nil  {
-                        child = Log(identifier: token[0], parent: parent)
-                        parent.addChildren(child!)
+                        child = self.init(identifier: token[0], parent: parent)
+                        parent.addChildren(child!, copyGrandChildren: true)
                     }
                     parent = child!
                     let range = name.rangeOfString(BaseLogConfiguration.DOT)!
@@ -162,12 +243,40 @@ public class Log: BaseLogConfiguration {
                 }
             }
         }
-        
     }
     
-    //public required init(identifier: String, minimumLevel: LogLevel = .Info, appenders: [LogAppender], filters: [LogFilter] = [], synchronousMode: Bool = false, additivity: Bool = true) {
-    //    super.init(identifier: identifier, minimumLevel:minimumLevel, appenders: appenders, filters:filters, synchronousMode:synchronousMode, additivity:additivity)
-    //}
+    public required init?(identifier: String, parent: LogConfiguration, allAppenders:[String:LogAppender], configuration: Dictionary<String,AnyObject>) {
+        var additivity = true
+        var logLevel:LogLevel? = nil
+        var appenders: [LogAppender] = []
+        var synchronous: Bool = false
+        
+        /// Log level
+        if let config = configuration[LogConfigurationConstants.Level] as? String {
+            logLevel = LogLevel(level: config)
+        }
+        /// Log additivity
+        if let config = configuration[LogConfigurationConstants.Additivity] as? Bool {
+            additivity = config
+        }
+        // Log synchronous mode
+        if let logSynchronous = configuration[LogConfigurationConstants.Synchronous] as? Bool {
+            synchronous = logSynchronous
+        }
+        /// Log Appenders
+        if let config = configuration[LogConfigurationConstants.Appenders] as? Array<String> {
+            for appenderName in config {
+                if let appender = allAppenders[appenderName] {
+                    appenders.append(appender)
+                }
+            }
+        }
+        super.init(identifier: identifier, assignedLevel:logLevel, parent:parent, appenders:appenders, additivity:additivity, synchronousMode:synchronous)
+    }
+    
+    public required init(identifier: String, parent: LogConfiguration){
+        super.init(identifier: identifier, assignedLevel:nil, parent: parent, appenders: [], synchronousMode:parent.synchronousMode)
+    }
     
     // MARK: - Convenience logging methods
     // MARK: * Verbose

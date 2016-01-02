@@ -18,6 +18,10 @@
 
 import Foundation
 
+struct FileLogAppendContants {
+    static let FileName: String = "fileName"
+}
+
 /**
 A `LogRecorder` implementation that stores log messages in a file.
 
@@ -46,22 +50,50 @@ public class FileLogAppend: BaseLogAppender
     
     :param:     formatters The `LogFormatter`s to use for the recorder.
     */
-    public init?(filePath: String, formatters: [LogFormatter] = [DefaultLogFormatter()])
+    public convenience init?(filePath: String, formatters: [LogFormatter] = [DefaultLogFormatter()])
+    {
+        self.init(name: "FileLogRecorder[\(filePath)]", filePath: filePath, formatters: formatters)
+    }
+    
+    /**
+     Attempts to initialize a new `FileLogRecorder` instance to use the
+     given file path and log formatters. This will fail if `filePath` could
+     not be opened for writing.
+     
+     :param:     filePath The path of the file to be written. The containing
+     directory must exist and be writable by the process. If the
+     file does not yet exist, it will be created; if it does exist,
+     new log messages will be appended to the end.
+     
+     :param:     formatters The `LogFormatter`s to use for the recorder.
+     */
+    public init?(name:String, filePath: String, formatters: [LogFormatter] = [DefaultLogFormatter()], filters:[LogFilter] = [])
     {
         let f = fopen(filePath, "a")
-
+        
         self.filePath = filePath
         self.file = f
         self.newlineCharset = NSCharacterSet.newlineCharacterSet()
-
-        super.init(name: "FileLogRecorder[\(filePath)]", formatters: formatters)
-
+        
+        super.init(name:name, formatters: formatters, filters:filters)
+        
         // we really should do this right after fopen() so we can avoid
         // creating the queue, etc., but Swift requires that failable
         // initializers populate *all* properties before returning nil
         if f == nil {
             return nil
         }
+    }
+
+    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+        guard let filePath = configuration[FileLogAppendContants.FileName] as?  String  else {
+            return nil
+        }
+        
+        guard let config = self.dynamicType.configuration(configuration) else {
+            return nil
+        }
+        self.init(name:config.name, filePath:filePath, formatters:config.formatters, filters:config.filters)
     }
 
     deinit {

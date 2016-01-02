@@ -1,5 +1,5 @@
 /**
- * @name            DefaultRootLogConfiguration.swift
+ * @name            RootLogConfiguration.swift
  * @partof          zucred AG
  * @description
  * @author	 		Vasco Mouta
@@ -27,14 +27,13 @@ System Log as well as the `stderr` console.
 Additional optional `LogRecorders` may be specified to record messages to
 other arbitrary types of data stores, such as files or HTTP endpoints.
 */
-class RootLogConfiguration: BaseLogConfiguration
+public class RootLogConfiguration: BaseLogConfiguration
 {
-    init() {
-        super.init(identifier: RootLogConfiguration.ROOT_IDENTIFIER, effectiveLevel:.Info, parent:nil, appenders: [ConsoleLogAppender()], additivity: false)
+    public required convenience init(assignedLevel: LogLevel = .Info, appenders: [LogAppender] = [ConsoleLogAppender()], synchronousMode: Bool = false) {
+        self.init(identifier: RootLogConfiguration.ROOT_IDENTIFIER, assignedLevel: assignedLevel, parent: nil, appenders: appenders, synchronousMode: synchronousMode, additivity: false)
     }
     
-    init(assignedLevel: LogLevel = .Info, appenders: [LogAppender], filters: [LogFilter] = [], synchronousMode: Bool = false)
-    {
-        super.init(identifier: RootLogConfiguration.ROOT_IDENTIFIER, effectiveLevel: assignedLevel, parent: nil, appenders: appenders, filters: filters, synchronousMode: synchronousMode, additivity: false)
+    private init(identifier: String, assignedLevel: LogLevel = .Info, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true) {
+        super.init(identifier:identifier, assignedLevel:assignedLevel, parent:parent, appenders:appenders, synchronousMode:synchronousMode, additivity:additivity)
     }
 }
