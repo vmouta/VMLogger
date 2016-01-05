@@ -512,19 +512,23 @@ public class Log: BaseLogConfiguration {
     }
     
     public static func dumpLog(log: LogConfiguration = Log.sharedInstance, severity: LogLevel = .Info) {
-        
-        let description = log.fullName() + " - a:" + (log.assignedLevel?.description ?? "null") + " - e:" + log.effectiveLevel.description
+        var description = "assigned: "
+        if let assignedLevel = log.assignedLevel?.description {
+            description = description + String(assignedLevel.characters.first! as Character)
+        } else { description = description + "-" }
+        description = description + " | effective: " + String(log.effectiveLevel.description.characters.first! as Character)
+        description = description + " | name: " + log.fullName()
         switch(severity) {
             case .Verbose:
-                Log.severe(description)
+                Log.verbose(description)
             case .Debug:
-                Log.severe(description)
+                Log.debug(description)
             case .Info:
-                Log.severe(description)
+                Log.info(description)
             case .Warning:
-                Log.severe(description)
+                Log.warning(description)
             case .Error:
-                Log.severe(description)
+                Log.error(description)
             case .Severe:
                 Log.severe(description)
             default:
