@@ -62,63 +62,7 @@ public class Log: BaseLogConfiguration {
     
     public static func enableFromFile(fileName: String = Log.LoggerInfoFile) {
         if let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "plist"), let dict = NSDictionary(contentsOfFile: path) {
-            #if DEBUG
-                var rootLevel: LogLevel = .Debug
-            #else
-                var rootLevel: LogLevel = .Info
-            #endif
-            var rootSynchronous = false
-            var appenders: [String:LogAppender] = [:]
-            var rootAppenders: [LogAppender] = []
-            
-            /// Appenders for the log
-            if let appendersConfig = dict.valueForKey(Log.Appenders) as? Array<Dictionary<String, AnyObject> > {
-                for appenderConfig in appendersConfig {
-                    if let className = appenderConfig[LogAppenderConstants.Class] as? String {
-                        if let swiftClass = NSClassFromString(className) as? LogAppender.Type {
-                            if let appender = swiftClass.init(configuration: appenderConfig) {
-                                appenders[appender.name] = appender
-                            }
-                        }
-                    }
-                }
-            }
-            
-            /// Root Appendes
-            if let rootAppendersConfig = dict.valueForKey(Log.LoggerAppenders) as? Array<String> {
-                for rootAppender in rootAppendersConfig {
-                    if let appender = appenders[rootAppender] {
-                        rootAppenders.append(appender)
-                    }
-                }
-            }
-            /// Root Log Level
-            if let rootLoggerLevel = dict.valueForKey(Log.LoggerLevel) as? String {
-                rootLevel = LogLevel(level: rootLoggerLevel)
-            }
-            // Root synchronous mode
-            if let rootLoggerSynchronous = dict.valueForKey(Log.LoggerSynchronous) as? Bool {
-                rootSynchronous = rootLoggerSynchronous
-            }
-            Log.enable(RootLogConfiguration(assignedLevel:rootLevel, appenders:rootAppenders, synchronousMode:rootSynchronous), minimumSeverity:rootLevel)
-            
-            /// Logs Configuration
-            if let logsConfig = dict.valueForKey(Log.LoggerConfig) as? Dictionary<String, AnyObject> {
-                for (logName, configValue) in logsConfig {
-                    if let configuration = configValue as? Dictionary<String, AnyObject> {
-                        let currentChild = self.getLogger(logName)
-                        if let parent = currentChild.parent {
-                            let newChild = self.init(identifier: currentChild.identifier, parent: parent, allAppenders:appenders, configuration: configuration)
-                            parent.addChildren(newChild!, copyGrandChildren: true)
-                        } else {
-                            // Changing root configuration
-                            // TODO: possibility to reset root configuration
-                        }
-                    } else {
-                        Log.error("Log configuration for \(logName) is not valid. Dictionary<String, Any> is required")
-                    }
-                }
-            }
+            self.enable(dict)
         } else {
             ///  No zucred configuration file, set default values
             /// Logger Configuration
@@ -128,6 +72,68 @@ public class Log: BaseLogConfiguration {
                 Log.enable()
             #endif
             Log.error("Log configuration file not found: \(fileName)")
+        }
+    }
+
+    public static func enable(values: NSDictionary) {
+        #if DEBUG
+            var rootLevel: LogLevel = .Debug
+        #else
+            var rootLevel: LogLevel = .Info
+        #endif
+        var rootSynchronous = false
+        var appenders: [String:LogAppender] = [:]
+        var rootAppenders: [LogAppender] = []
+        
+        /// Appenders for the log
+        if let appendersConfig = values.valueForKey(Log.Appenders) as? Array<Dictionary<String, AnyObject> > {
+            for appenderConfig in appendersConfig {
+                if let className = appenderConfig[LogAppenderConstants.Class] as? String {
+                    if let swiftClass = NSClassFromString(className) as? LogAppender.Type {
+                        if let appender = swiftClass.init(configuration: appenderConfig) {
+                            appenders[appender.name] = appender
+                        }
+                    }
+                }
+            }
+        }
+        
+        /// Root Appendes
+        if let rootAppendersConfig = values.valueForKey(Log.LoggerAppenders) as? Array<String> {
+            for rootAppender in rootAppendersConfig {
+                if let appender = appenders[rootAppender] {
+                    rootAppenders.append(appender)
+                }
+            }
+        } else if let appender = appenders[ConsoleLogAppender.CONSOLE_IDENTIFIER] {
+            rootAppenders.append(appender)
+        }
+        /// Root Log Level
+        if let rootLoggerLevel = values.valueForKey(Log.LoggerLevel) as? String {
+            rootLevel = LogLevel(level: rootLoggerLevel)
+        }
+        // Root synchronous mode
+        if let rootLoggerSynchronous = values.valueForKey(Log.LoggerSynchronous) as? Bool {
+            rootSynchronous = rootLoggerSynchronous
+        }
+        Log.enable(RootLogConfiguration(assignedLevel:rootLevel, appenders:rootAppenders, synchronousMode:rootSynchronous), minimumSeverity:rootLevel)
+        
+        /// Logs Configuration
+        if let logsConfig = values.valueForKey(Log.LoggerConfig) as? Dictionary<String, AnyObject> {
+            for (logName, configValue) in logsConfig {
+                if let configuration = configValue as? Dictionary<String, AnyObject> {
+                    let currentChild = self.getLogger(logName)
+                    if let parent = currentChild.parent {
+                        let newChild = self.init(identifier: currentChild.identifier, parent: parent, allAppenders:appenders, configuration: configuration)
+                        parent.addChildren(newChild!, copyGrandChildren: true)
+                    } else {
+                        // Changing root configuration
+                        // TODO: possibility to reset root configuration
+                    }
+                } else {
+                    Log.error("Log configuration for \(logName) is not valid. Dictionary<String, Any> is required")
+                }
+            }
         }
     }
     
@@ -503,5 +509,29 @@ public class Log: BaseLogConfiguration {
     private static func value(logger: LogConfiguration, severity: LogLevel, value: Any?, function: String = __FUNCTION__, filePath: String = __FILE__, fileLine: Int = __LINE__)
     {
         channelForSeverity(severity)?.value(logger, value: value, function: function, filePath: filePath, fileLine: fileLine)
+    }
+    
+    public static func dumpLog(log: LogConfiguration = Log.sharedInstance, severity: LogLevel = .Info) {
+        
+        let description = log.fullName() + " - a:" + (log.assignedLevel?.description ?? "null") + " - e:" + log.effectiveLevel.description
+        switch(severity) {
+            case .Verbose:
+                Log.severe(description)
+            case .Debug:
+                Log.severe(description)
+            case .Info:
+                Log.severe(description)
+            case .Warning:
+                Log.severe(description)
+            case .Error:
+                Log.severe(description)
+            case .Severe:
+                Log.severe(description)
+            default:
+                break
+        }
+        for child in log.children {
+            Log.dumpLog(child, severity:severity)
+        }
     }
 }

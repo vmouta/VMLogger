@@ -25,4 +25,8 @@ public class AppLogger : Log {
     public static func logger(identifier: String) -> AppLogger {
         return super.getLogger(identifier) as! AppLogger
     }
+    
+    public static func dump() {
+        super.dumpLog()
+    }
 }

@@ -32,20 +32,20 @@
 	<dict>
 		<key>VMLogger_Example</key>
 		<dict>
-			<key>LOGGER_APPENDERS</key>
+			<key>appenders</key>
 			<array>
 				<string>file</string>
 			</array>
-			<key>LOGGER_LEVEL</key>
+			<key>level</key>
 			<string>Error</string>
-			<key>LOGGER_ADDITIVITY</key>
+			<key>additivity</key>
 			<true/>
 		</dict>
 		<key>VMLogger_Example.AppDelegate</key>
 		<dict>
-			<key>LOGGER_LEVEL</key>
+			<key>level</key>
 			<string>info</string>
-			<key>LOGGER_ADDITIVITY</key>
+			<key>additivity</key>
 			<true/>
 		</dict>
 	</dict>
