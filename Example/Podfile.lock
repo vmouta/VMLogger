@@ -1,15 +1,9 @@
 PODS:
-  - Alamofire (3.1.4)
-  - FBSnapshotTestCase (2.0.7):
-    - FBSnapshotTestCase/SwiftSupport (= 2.0.7)
-  - FBSnapshotTestCase/Core (2.0.7)
-  - FBSnapshotTestCase/SwiftSupport (2.0.7):
-    - FBSnapshotTestCase/Core
-  - VMLogger (0.2.2):
+  - Alamofire (3.3.0)
+  - VMLogger (0.2.3):
     - Alamofire
 
 DEPENDENCIES:
-  - FBSnapshotTestCase
   - VMLogger (from `../`)
 
 EXTERNAL SOURCES:
@@ -17,8 +11,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  Alamofire: fbc829692f351fa1d8a31dd75fd7f7f56fea31fb
-  FBSnapshotTestCase: 7e85180d0d141a0cf472352edda7e80d7eaeb547
-  VMLogger: e54817c73884a40f90f0ae3a9610d76dfcbddf7e
+  Alamofire: 9054db4a1b1ca9e363223183e01cea380159a27c
+  VMLogger: c9727ff08e29748013985ee001e7d3735d923f69
 
 COCOAPODS: 0.39.0

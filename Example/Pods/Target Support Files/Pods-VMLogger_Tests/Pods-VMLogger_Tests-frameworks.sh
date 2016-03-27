@@ -86,10 +86,8 @@ strip_invalid_archs() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-VMLogger_Tests/Alamofire.framework"
   install_framework "Pods-VMLogger_Tests/VMLogger.framework"
-  install_framework "Pods-VMLogger_Tests/FBSnapshotTestCase.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-VMLogger_Tests/Alamofire.framework"
   install_framework "Pods-VMLogger_Tests/VMLogger.framework"
-  install_framework "Pods-VMLogger_Tests/FBSnapshotTestCase.framework"
 fi

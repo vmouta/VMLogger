@@ -8,5 +8,4 @@ end
 target 'VMLogger_Tests', :exclusive => true do
   pod "VMLogger", :path => "../"
 
-  pod 'FBSnapshotTestCase'
 end

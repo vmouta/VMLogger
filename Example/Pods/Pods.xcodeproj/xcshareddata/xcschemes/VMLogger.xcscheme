@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '623937478E487611A3C1DB4C'
+               BlueprintIdentifier = 'DC66CDD4A90E18B6C9212882'
                BlueprintName = 'VMLogger'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'VMLogger.framework'>
