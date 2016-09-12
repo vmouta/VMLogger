@@ -1,6 +1,6 @@
 {
   "name": "VMLogger",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "summary": "A simple debug log BackLog kind Logger.",
   "description": "Provides an extensible Swift-based logging API that is simple, lightweight and performant.\nBased on CleanroomLogger and XCGLogger",
   "homepage": "https://github.com/vmouta/VMLogger",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/vmouta/VMLogger.git",
-    "tag": "0.2.3"
+    "tag": "0.3.0"
   },
   "social_media_url": "https://twitter.com/vmouta",
   "platforms": {

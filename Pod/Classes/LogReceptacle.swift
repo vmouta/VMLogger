@@ -38,14 +38,14 @@ public final class LogReceptacle
         var appendersCount: UInt = 0
         var logger: LogConfiguration? = entry.logger
         let synchronous = logger!.synchronousMode
-        let acceptDispatcher = dispatcherForQueue(acceptQueue, synchronous: synchronous, block: {
+        _ = dispatcherForQueue(acceptQueue, synchronous: synchronous, block: {
             var config: LogConfiguration
             repeat {
                 config = logger!
                 if ((entry.logLevel>=config.effectiveLevel) || (config.effectiveLevel == LogLevel.Off && config.identifier != entry.logger.identifier)) {
                     for appender in config.appenders {
                         if self.logEntry(entry, passesFilters: appender.filters) {
-                            let recordDispatcher = self.dispatcherForQueue(appender.queue, synchronous: synchronous, block: {
+                            _ = self.dispatcherForQueue(appender.queue, synchronous: synchronous, block: {
                                 for formatter in appender.formatters {
                                     if let formatted = formatter.formatLogEntry(entry) {
                                         appender.recordFormattedMessage(formatted, forLogEntry: entry, currentQueue: appender.queue, synchronousMode: synchronous)

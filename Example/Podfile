@@ -1,11 +1,13 @@
 source 'https://github.com/CocoaPods/Specs.git'
+
+
 use_frameworks!
 
-target 'VMLogger_Example', :exclusive => true do
+target 'VMLogger_Example' do
   pod "VMLogger", :path => "../"
 end
 
-target 'VMLogger_Tests', :exclusive => true do
+target 'VMLogger_Tests' do
   pod "VMLogger", :path => "../"
 
 end

@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		038E14EA4FD073CF1262E7A1 /* Pods_VMLogger_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67C747239F126F67DCC0ABAD /* Pods_VMLogger_Tests.framework */; };
+		2D7ED561CF285094D3F0CE34 /* Pods_VMLogger_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90C07C79ABF28AF232D539A0 /* Pods_VMLogger_Tests.framework */; };
+		3C2EA3C59CF31C162A59C028 /* Pods_VMLogger_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7800F2540E401A3632344911 /* Pods_VMLogger_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
-		6AC3693576C3FEE6FBB927E4 /* Pods_VMLogger_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFF28387EC0B88B5F630FAF3 /* Pods_VMLogger_Example.framework */; };
 		9700090A1C35332100DF578C /* VMLogger-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 970009091C35332100DF578C /* VMLogger-Info.plist */; };
 		9745833B1C2F063D002B9526 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9745833A1C2F063D002B9526 /* AppLogger.swift */; };
 /* End PBXBuildFile section */
@@ -30,9 +30,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0330570CBC1B8FEADA44E1D1 /* Pods-VMLogger_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VMLogger_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-VMLogger_Example/Pods-VMLogger_Example.release.xcconfig"; sourceTree = "<group>"; };
 		09E4A1947F336308D603AFB0 /* VMLogger.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = VMLogger.podspec; path = ../VMLogger.podspec; sourceTree = "<group>"; };
-		0CC4464E26E3264FD9EFD0CA /* Pods-VMLogger_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VMLogger_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VMLogger_Example/Pods-VMLogger_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		5DCD1793CBA281427DB6AA47 /* Pods-VMLogger_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VMLogger_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-VMLogger_Tests/Pods-VMLogger_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* VMLogger_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VMLogger_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -43,14 +42,15 @@
 		607FACE51AFB9204008FA782 /* VMLogger_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VMLogger_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		67C747239F126F67DCC0ABAD /* Pods_VMLogger_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VMLogger_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		950C8E022FEFA7223E892F7D /* Pods-VMLogger_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VMLogger_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-VMLogger_Example/Pods-VMLogger_Example.release.xcconfig"; sourceTree = "<group>"; };
+		7800F2540E401A3632344911 /* Pods_VMLogger_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VMLogger_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		90C07C79ABF28AF232D539A0 /* Pods_VMLogger_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VMLogger_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		970009091C35332100DF578C /* VMLogger-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "VMLogger-Info.plist"; sourceTree = "<group>"; };
 		9745833A1C2F063D002B9526 /* AppLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
 		9C4F2D0A4E4FBAF625DA7977 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		AFF28387EC0B88B5F630FAF3 /* Pods_VMLogger_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VMLogger_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B2679BF60A49AC925AE64439 /* Pods-VMLogger_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VMLogger_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VMLogger_Tests/Pods-VMLogger_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		A65C303A71875D5C26B7F510 /* Pods-VMLogger_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VMLogger_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VMLogger_Tests/Pods-VMLogger_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		D5255F7101153555C84617E8 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		D7A3177F79D0AA9AE6BB135A /* Pods-VMLogger_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VMLogger_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VMLogger_Example/Pods-VMLogger_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		F6BE0D62343FCF735CAD68CE /* Pods-VMLogger_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VMLogger_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-VMLogger_Tests/Pods-VMLogger_Tests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,7 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6AC3693576C3FEE6FBB927E4 /* Pods_VMLogger_Example.framework in Frameworks */,
+				3C2EA3C59CF31C162A59C028 /* Pods_VMLogger_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,13 +66,24 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				038E14EA4FD073CF1262E7A1 /* Pods_VMLogger_Tests.framework in Frameworks */,
+				2D7ED561CF285094D3F0CE34 /* Pods_VMLogger_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		43DC2E6F7DEC6DBC88F194F4 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D7A3177F79D0AA9AE6BB135A /* Pods-VMLogger_Example.debug.xcconfig */,
+				0330570CBC1B8FEADA44E1D1 /* Pods-VMLogger_Example.release.xcconfig */,
+				A65C303A71875D5C26B7F510 /* Pods-VMLogger_Tests.debug.xcconfig */,
+				F6BE0D62343FCF735CAD68CE /* Pods-VMLogger_Tests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
@@ -80,8 +91,8 @@
 				607FACD21AFB9204008FA782 /* Example for VMLogger */,
 				607FACE81AFB9204008FA782 /* Tests */,
 				607FACD11AFB9204008FA782 /* Products */,
-				826CE9F8DAE07AE28265329A /* Pods */,
-				EEFEEDA3E66851A1E8095865 /* Frameworks */,
+				43DC2E6F7DEC6DBC88F194F4 /* Pods */,
+				A6FF3CD736934FBFB487BFBA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -145,22 +156,11 @@
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
-		826CE9F8DAE07AE28265329A /* Pods */ = {
+		A6FF3CD736934FBFB487BFBA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0CC4464E26E3264FD9EFD0CA /* Pods-VMLogger_Example.debug.xcconfig */,
-				950C8E022FEFA7223E892F7D /* Pods-VMLogger_Example.release.xcconfig */,
-				B2679BF60A49AC925AE64439 /* Pods-VMLogger_Tests.debug.xcconfig */,
-				5DCD1793CBA281427DB6AA47 /* Pods-VMLogger_Tests.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-		EEFEEDA3E66851A1E8095865 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				AFF28387EC0B88B5F630FAF3 /* Pods_VMLogger_Example.framework */,
-				67C747239F126F67DCC0ABAD /* Pods_VMLogger_Tests.framework */,
+				7800F2540E401A3632344911 /* Pods_VMLogger_Example.framework */,
+				90C07C79ABF28AF232D539A0 /* Pods_VMLogger_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -172,12 +172,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "VMLogger_Example" */;
 			buildPhases = (
-				B05E6B6660FC80C6378EB8E2 /* Check Pods Manifest.lock */,
+				6F84FC1C6BB86F0E30DB594C /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				C0C1D3ACD3A9322868FC358F /* Embed Pods Frameworks */,
-				AB2F92A53A15322ABF975BCB /* Copy Pods Resources */,
+				7108DD96CF3C1AD2F28398F1 /* [CP] Embed Pods Frameworks */,
+				3D94A9F242C0B2EC8B7BFEB7 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -192,12 +192,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACF21AFB9204008FA782 /* Build configuration list for PBXNativeTarget "VMLogger_Tests" */;
 			buildPhases = (
-				5CA34EF7B4A77E115F098C06 /* Check Pods Manifest.lock */,
+				4F3F58B748DA1E9410F5704F /* [CP] Check Pods Manifest.lock */,
 				607FACE11AFB9204008FA782 /* Sources */,
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
-				7006B28538A636F4D5DD5960 /* Embed Pods Frameworks */,
-				346161EE8E205B1985F2CA95 /* Copy Pods Resources */,
+				DDEB6567A80F6DAFCC828CB3 /* [CP] Embed Pods Frameworks */,
+				B0FC674C066B50B04541B5BE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -269,59 +269,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		346161EE8E205B1985F2CA95 /* Copy Pods Resources */ = {
+		3D94A9F242C0B2EC8B7BFEB7 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VMLogger_Tests/Pods-VMLogger_Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5CA34EF7B4A77E115F098C06 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		7006B28538A636F4D5DD5960 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VMLogger_Tests/Pods-VMLogger_Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AB2F92A53A15322ABF975BCB /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -329,34 +284,79 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VMLogger_Example/Pods-VMLogger_Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B05E6B6660FC80C6378EB8E2 /* Check Pods Manifest.lock */ = {
+		4F3F58B748DA1E9410F5704F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		C0C1D3ACD3A9322868FC358F /* Embed Pods Frameworks */ = {
+		6F84FC1C6BB86F0E30DB594C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		7108DD96CF3C1AD2F28398F1 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VMLogger_Example/Pods-VMLogger_Example-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B0FC674C066B50B04541B5BE /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VMLogger_Tests/Pods-VMLogger_Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DDEB6567A80F6DAFCC828CB3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VMLogger_Tests/Pods-VMLogger_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -494,7 +494,7 @@
 		};
 		607FACF01AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CC4464E26E3264FD9EFD0CA /* Pods-VMLogger_Example.debug.xcconfig */;
+			baseConfigurationReference = D7A3177F79D0AA9AE6BB135A /* Pods-VMLogger_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = VMLogger/Info.plist;
@@ -507,7 +507,7 @@
 		};
 		607FACF11AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 950C8E022FEFA7223E892F7D /* Pods-VMLogger_Example.release.xcconfig */;
+			baseConfigurationReference = 0330570CBC1B8FEADA44E1D1 /* Pods-VMLogger_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = VMLogger/Info.plist;
@@ -520,7 +520,7 @@
 		};
 		607FACF31AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B2679BF60A49AC925AE64439 /* Pods-VMLogger_Tests.debug.xcconfig */;
+			baseConfigurationReference = A65C303A71875D5C26B7F510 /* Pods-VMLogger_Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -541,7 +541,7 @@
 		};
 		607FACF41AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DCD1793CBA281427DB6AA47 /* Pods-VMLogger_Tests.release.xcconfig */;
+			baseConfigurationReference = F6BE0D62343FCF735CAD68CE /* Pods-VMLogger_Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
