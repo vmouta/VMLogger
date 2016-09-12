@@ -79,14 +79,14 @@ public final class LogReceptacle
         return true
     }
     
-    private func dispatcherForQueue(queue: dispatch_queue_t, synchronous: Bool) -> (dispatch_block_t) -> Void
+    private func dispatcherForQueue(queue: dispatch_queue_t, synchronous: Bool) -> (block: dispatch_block_t) -> Void
     {
         if synchronous {
-            return { (block: dispatch_block_t) in
+            return { block in
                 return dispatch_sync(queue, block)
             }
         } else {
-            return { (block: dispatch_block_t) in
+            return { block in
                 return dispatch_async(queue, block)
             }
         }
