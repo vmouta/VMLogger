@@ -35,5 +35,5 @@ public class RootLogConfiguration: BaseLogConfiguration
     
     private init(identifier: String, assignedLevel: LogLevel = .Info, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true) {
         super.init(identifier:identifier, assignedLevel:assignedLevel, parent:parent, appenders:appenders, synchronousMode:synchronousMode, additivity:additivity)
-    }
+    } 
 }

@@ -204,21 +204,22 @@ public class BaseLogFormatter: LogFormatter
      
      :returns:   A string representation of the `severity` value.
      */
-    private static func stringRepresentation(var string: String, lenght: Int, right: Bool = true) -> String
+    private static func stringRepresentation(string: String, lenght: Int, right: Bool = true) -> String
     {
         if(lenght > 0) {
-            if(string.characters.count < lenght)
+            var str = string
+            if(str.characters.count < lenght)
             {
-                while string.characters.count < lenght {
+                while str.characters.count < lenght {
                     if right==true {
-                        string = string + " "
+                        str = str + " "
                     } else {
-                        string = " " + string
+                        str = " " + str
                     }
                 }
             } else {
                 let index: String.Index = string.startIndex.advancedBy(lenght)
-                string = string.substringToIndex(index)
+                str = string.substringToIndex(index)
             }
         }
         return string

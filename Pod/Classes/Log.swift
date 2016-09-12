@@ -286,152 +286,152 @@ public class Log: BaseLogConfiguration {
     
     // MARK: - Convenience logging methods
     // MARK: * Verbose
-    public class func verbose(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func verbose(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(Log.sharedInstance, severity: .Verbose, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func verbose(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func verbose(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(Log.sharedInstance, severity: .Verbose, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func verbose(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func verbose(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(Log.sharedInstance, severity: .Verbose, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func verbose(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func verbose(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(self, severity: .Verbose, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func verbose(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func verbose(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(self, severity: .Verbose, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func verbose(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func verbose(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(self, severity: .Verbose, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     // MARK: * Debug
-    public class func debug(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func debug(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(Log.sharedInstance, severity: .Debug, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func debug(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func debug(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(Log.sharedInstance, severity: .Debug, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func debug(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func debug(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(Log.sharedInstance, severity: .Debug, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func debug(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func debug(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(self, severity: .Debug, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func debug(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func debug(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(self, severity: .Debug, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func debug(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func debug(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(self, severity: .Debug, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     // MARK: * Info
-    public class func info(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func info(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(Log.sharedInstance, severity: .Info, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func info(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func info(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(Log.sharedInstance, severity: .Info, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func info(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func info(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(Log.sharedInstance, severity: .Info, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func info(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func info(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(self, severity: .Info, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func info(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func info(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(self, severity: .Info, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func info(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func info(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(self, severity: .Info, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     // MARK: * Warning
-    public class func warning(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func warning(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(Log.sharedInstance, severity: .Warning, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func warning(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func warning(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(Log.sharedInstance, severity: .Warning, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func warning(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func warning(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(Log.sharedInstance, severity: .Warning, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func warning(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func warning(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(self, severity: .Warning, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func warning(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func warning(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(self, severity: .Warning, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func warning(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func warning(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(self, severity: .Warning, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     // MARK: * Error
-    public class func error(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func error(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(Log.sharedInstance, severity: .Error, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func error(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func error(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(Log.sharedInstance, severity: .Error, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func error(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func error(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(Log.sharedInstance, severity: .Error, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func error(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func error(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(self, severity: .Error, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func error(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func error(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(self, severity: .Error, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func error(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func error(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(self, severity: .Error, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     // MARK: * Severe
-    public class func severe(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func severe(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(Log.sharedInstance, severity: .Severe, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func severe(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func severe(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(Log.sharedInstance, severity: .Severe, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func severe(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public class func severe(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(Log.sharedInstance, severity: .Severe, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func severe(functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func severe(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.trace(self, severity: .Severe, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func severe(message message: String, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func severe(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.message(self, severity: .Severe, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func severe(value: Any?, functionName: String = __FUNCTION__, fileName: String = __FILE__, lineNumber: Int = __LINE__) {
+    public func severe(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
         Log.value(self, severity: .Severe, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
@@ -455,7 +455,7 @@ public class Log: BaseLogConfiguration {
      the line number issuing the call to this function. **You should
      not provide a value for this parameter.**
      */
-    private static func trace(logger: LogConfiguration, severity: LogLevel, function: String = __FUNCTION__, filePath: String = __FILE__, fileLine: Int = __LINE__)
+    private static func trace(logger: LogConfiguration, severity: LogLevel, function: String = #function, filePath: String = #file, fileLine: Int = #line)
     {
         channelForSeverity(severity)?.trace(logger, function: function, filePath: filePath, fileLine: fileLine)
     }
@@ -479,7 +479,7 @@ public class Log: BaseLogConfiguration {
      the line number issuing the call to this function. **You should
      not provide a value for this parameter.**
      */
-    private static func message(logger: LogConfiguration, severity: LogLevel, message: String, function: String = __FUNCTION__, filePath: String = __FILE__, fileLine: Int = __LINE__)
+    private static func message(logger: LogConfiguration, severity: LogLevel, message: String, function: String = #function, filePath: String = #file, fileLine: Int = #line)
     {
         channelForSeverity(severity)?.message(logger, msg: message, function: function, filePath: filePath, fileLine: fileLine)
     }
@@ -506,7 +506,7 @@ public class Log: BaseLogConfiguration {
      the line number issuing the call to this function. **You should
      not provide a value for this parameter.**
      */
-    private static func value(logger: LogConfiguration, severity: LogLevel, value: Any?, function: String = __FUNCTION__, filePath: String = __FILE__, fileLine: Int = __LINE__)
+    private static func value(logger: LogConfiguration, severity: LogLevel, value: Any?, function: String = #function, filePath: String = #file, fileLine: Int = #line)
     {
         channelForSeverity(severity)?.value(logger, value: value, function: function, filePath: filePath, fileLine: fileLine)
     }

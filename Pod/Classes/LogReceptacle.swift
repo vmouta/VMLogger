@@ -51,7 +51,7 @@ public final class LogReceptacle
                                 for formatter in appender.formatters {
                                     if let formatted = formatter.formatLogEntry(entry) {
                                         appender.recordFormattedMessage(formatted, forLogEntry: entry, currentQueue: appender.queue, synchronousMode: synchronous)
-                                        appendersCount++
+                                        appendersCount=appendersCount+1
                                     }
                                 }
                             }
