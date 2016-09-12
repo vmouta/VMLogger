@@ -38,23 +38,21 @@ public final class LogReceptacle
         var appendersCount: UInt = 0
         var logger: LogConfiguration? = entry.logger
         let synchronous = logger!.synchronousMode
-        let acceptDispatcher = dispatcherForQueue(acceptQueue, synchronous: synchronous)
-        acceptDispatcher {
+        let acceptDispatcher = dispatcherForQueue(acceptQueue, synchronous: synchronous, block: {
             var config: LogConfiguration
             repeat {
                 config = logger!
                 if ((entry.logLevel>=config.effectiveLevel) || (config.effectiveLevel == LogLevel.Off && config.identifier != entry.logger.identifier)) {
                     for appender in config.appenders {
                         if self.logEntry(entry, passesFilters: appender.filters) {
-                            let recordDispatcher = self.dispatcherForQueue(appender.queue, synchronous: synchronous)
-                            recordDispatcher {
+                            let recordDispatcher = self.dispatcherForQueue(appender.queue, synchronous: synchronous, block: {
                                 for formatter in appender.formatters {
                                     if let formatted = formatter.formatLogEntry(entry) {
                                         appender.recordFormattedMessage(formatted, forLogEntry: entry, currentQueue: appender.queue, synchronousMode: synchronous)
                                         appendersCount=appendersCount+1
                                     }
                                 }
-                            }
+                            })
                         }
                     }
                     logger = config.parent
@@ -64,7 +62,7 @@ public final class LogReceptacle
                     logger = nil
                 }
             } while(config.additivity == true && logger != nil)
-        }
+        })
     }
     
     private lazy var acceptQueue: dispatch_queue_t = dispatch_queue_create("LogBackReceptacle.acceptQueue", DISPATCH_QUEUE_SERIAL)
@@ -79,16 +77,12 @@ public final class LogReceptacle
         return true
     }
     
-    private func dispatcherForQueue(queue: dispatch_queue_t, synchronous: Bool) -> (block: dispatch_block_t) -> Void
+    private func dispatcherForQueue(queue: dispatch_queue_t, synchronous: Bool, block: dispatch_block_t)
     {
         if synchronous {
-            return { block in
-                return dispatch_sync(queue, block)
-            }
+            return dispatch_sync(queue, block)
         } else {
-            return { block in
-                return dispatch_async(queue, block)
-            }
+            return dispatch_async(queue, block)
         }
     }
 
