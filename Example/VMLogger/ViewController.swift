@@ -10,9 +10,9 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    public static let logger = AppLogger.logger(NSStringFromClass(ViewController.classForCoder()))
+    internal static let logger = AppLogger.logger(NSStringFromClass(ViewController.classForCoder()))
     
-    public static let logger1 = AppLogger.logger("VMLogger-Example.ViewController.children.grandchildren")
+    internal static let logger1 = AppLogger.logger("VMLogger-Example.ViewController.children.grandchildren")
     
     override func viewDidLoad() {
         super.viewDidLoad()

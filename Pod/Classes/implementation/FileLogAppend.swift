@@ -69,18 +69,23 @@ public class FileLogAppend: BaseLogAppender
      */
     public init?(name:String, filePath: String, formatters: [LogFormatter] = [DefaultLogFormatter()], filters:[LogFilter] = [])
     {
-        let f = fopen(filePath, "a")
-        
-        self.filePath = filePath
-        self.file = f
-        self.newlineCharset = NSCharacterSet.newlineCharacterSet()
-        
-        super.init(name:name, formatters: formatters, filters:filters)
-        
-        // we really should do this right after fopen() so we can avoid
-        // creating the queue, etc., but Swift requires that failable
-        // initializers populate *all* properties before returning nil
-        if f == nil {
+        if let dirs : [String] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true) as? [String] {
+            let dir = dirs[0] //documents directory
+            if let nsSt = (dir as? NSString) {
+                let fileNamePath = nsSt.stringByAppendingPathComponent(filePath)
+                let f = fopen(fileNamePath, "a")
+                if f != nil  {
+                    self.filePath = fileNamePath;
+                    self.file = f;
+                    self.newlineCharset = NSCharacterSet.newlineCharacterSet()
+                    super.init(name:name, formatters: formatters, filters:filters)
+                } else {
+                    return nil
+                }
+            } else {
+                return nil
+            }
+        } else {
             return nil
         }
     }

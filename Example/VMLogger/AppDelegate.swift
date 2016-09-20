@@ -49,7 +49,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         logger.severe()
         ViewController.logger.severe("severe")
         AppLogger.severe("severe")
-
+        
+        //case
+        if let uuid = UIDevice.currentDevice().identifierForVendor?.UUIDString {
+            logger.info(uuid)
+        }
+        if let bundleID = NSBundle.mainBundle().bundleIdentifier {
+            logger.info(bundleID)
+        }
         return true
     }
 

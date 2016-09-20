@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import UIKit
 
 struct PatternLogFormatterConstants {
     static let Pattern = "pattern"
@@ -168,9 +169,11 @@ public class PatternLogFormatter: BaseLogFormatter
                 case PatternLogFormatter.message:
                     replacement = BaseLogFormatter.stringRepresentationForPayload(entry)
                 case PatternLogFormatter.tread:
-                    replacement = String(entry.callingThreadID)
+                    var threadID: UInt64 = 0
+                    pthread_threadid_np(nil, &threadID)
+                    replacement = String(threadID)
                 case PatternLogFormatter.caller:
-                    replacement = ""
+                    replacement = String(entry.callingThreadID)
                 case PatternLogFormatter.function:
                     replacement = entry.callingFunction
                 case PatternLogFormatter.file:
@@ -180,7 +183,7 @@ public class PatternLogFormatter: BaseLogFormatter
                 case PatternLogFormatter.lineSeparator:
                     replacement = "\n"
                     break
-                default:
+            default:
                 break
             }
             
@@ -192,6 +195,7 @@ public class PatternLogFormatter: BaseLogFormatter
         }
         return details
     }
+    
     
     public static func getCaller(entry: LogEntry) -> String {
         var caller: String = ""

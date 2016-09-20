@@ -1,19 +1,19 @@
 PODS:
   - Alamofire (3.5.0)
-  - VMLogger (0.3.0):
+  - VMLogger (0.3.1):
     - Alamofire
 
 DEPENDENCIES:
-  - VMLogger (from `../`)
+  - VMLogger (from `../../VMLogger`)
 
 EXTERNAL SOURCES:
   VMLogger:
-    :path: ../
+    :path: ../../VMLogger
 
 SPEC CHECKSUMS:
   Alamofire: b70a7352335f8ea5babd0a923eb7e8eacc67b877
-  VMLogger: f6281abdaae3aa3e909127b9613cf4b6d3dbe751
+  VMLogger: 9ee2e8db61a43755a2c059de8ad3a42e8e9f4304
 
-PODFILE CHECKSUM: d483250f4559cd96778faf31a32d424b4a21400b
+PODFILE CHECKSUM: c9bf1ac50941b16320588a9070497069505f9be2
 
-COCOAPODS: 1.1.0.beta.1
+COCOAPODS: 1.1.0.rc.2

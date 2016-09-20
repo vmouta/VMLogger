@@ -98,7 +98,7 @@ public class Log: BaseLogConfiguration {
             }
         }
         
-        /// Root Appendes
+        /// Root Appenders
         if let rootAppendersConfig = values.valueForKey(Log.LoggerAppenders) as? Array<String> {
             for rootAppender in rootAppendersConfig {
                 if let appender = appenders[rootAppender] {
@@ -517,6 +517,7 @@ public class Log: BaseLogConfiguration {
             description = description + String(assignedLevel.characters.first! as Character)
         } else { description = description + "-" }
         description = description + " | effective: " + String(log.effectiveLevel.description.characters.first! as Character)
+        description = description + " | appenders: " + log.appenders.description
         description = description + " | name: " + log.fullName()
         switch(severity) {
             case .Verbose:
