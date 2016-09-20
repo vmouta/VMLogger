@@ -69,22 +69,16 @@ public class FileLogAppend: BaseLogAppender
      */
     public init?(name:String, filePath: String, formatters: [LogFormatter] = [DefaultLogFormatter()], filters:[LogFilter] = [])
     {
-        if let dirs : [String] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true) as? [String] {
-            let dir = dirs[0] //documents directory
-            if let nsSt = (dir as? NSString) {
-                let fileNamePath = nsSt.stringByAppendingPathComponent(filePath)
-                let f = fopen(fileNamePath, "a")
-                if f != nil  {
-                    self.filePath = fileNamePath;
-                    self.file = f;
-                    self.newlineCharset = NSCharacterSet.newlineCharacterSet()
-                    super.init(name:name, formatters: formatters, filters:filters)
-                } else {
-                    return nil
-                }
-            } else {
-                return nil
-            }
+        let dirs : [String] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true)
+        let dir = dirs[0] //documents directory
+        let nsSt = (dir as NSString)
+        let fileNamePath = nsSt.stringByAppendingPathComponent(filePath)
+        let f = fopen(fileNamePath, "a")
+        if f != nil  {
+            self.filePath = fileNamePath;
+            self.file = f;
+            self.newlineCharset = NSCharacterSet.newlineCharacterSet()
+            super.init(name:name, formatters: formatters, filters:filters)
         } else {
             return nil
         }

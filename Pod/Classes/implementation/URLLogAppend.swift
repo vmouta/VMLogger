@@ -144,9 +144,9 @@ public class URLLogAppend: BaseLogAppender
             .responseJSON { response in
                 print(response)
                 //to get status code
-                let status = response.response?.statusCode
+                _ = response.response?.statusCode
                 //to get JSON return value
-                let result = response.result.value
+                _ = response.result.value
         }
     }
     

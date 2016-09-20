@@ -21,13 +21,3 @@ Pod::Spec.new do |s|
     s.framework  = "Foundation"
     s.dependency 'Alamofire'
 end
-pod repo push vmouta-specs VMLogger.podspec
-2310  git tag -d '0.3.0'
-2311  git push origin :refs/tags/0.3.0
-2312  git add -A && git commit -m "assignment to _"
-2313  git push
-2314  git tag '0.3.0'
-2315  git push --tags
-2316  pod repo push zucred VMLogger.podspec
-2317  pod repo push zucred VMLogger.podspec
-2318  pod repo push vmouta-specs VMLogger.podspec
