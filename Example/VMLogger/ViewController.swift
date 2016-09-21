@@ -12,12 +12,12 @@ class ViewController: UIViewController {
 
     internal static let logger = AppLogger.logger(NSStringFromClass(ViewController.classForCoder()))
     
-    internal static let logger1 = AppLogger.logger("VMLogger-Example.ViewController.children.grandchildren")
+    internal static let logger1 = AppLogger.logger("VMLogger_Example.ViewController.children.grandchildren")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        ViewController.logger1
+        ViewController.logger1.error(self)
     }
 
     override func didReceiveMemoryWarning() {

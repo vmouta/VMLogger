@@ -5,6 +5,17 @@
 	<key>APPENDERS</key>
 	<array>
 		<dict>
+			<key>filters</key>
+			<array>
+				<dict>
+					<key>class</key>
+					<string>VMLogger.ValueTypeFilter</string>
+					<key>types</key>
+					<array>
+						<string>ViewController</string>
+					</array>
+				</dict>
+			</array>
 			<key>headers</key>
 			<dict>
 				<key>apikey</key>

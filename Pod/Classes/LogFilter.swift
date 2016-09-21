@@ -26,7 +26,7 @@ Before a `LogEntry` is recorded, any `LogFilter`s specified in the active
 `LogConfiguration` are given a chance to prevent the entry from being recorded
 by returning `false` from the `shouldRecordLogEntry()` function.
 */
-public protocol LogFilter
+public protocol LogFilter : CustomDebugStringConvertible
 {
     /**
     Called to determine whether the given `LogEntry` should be recorded.

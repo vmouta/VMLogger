@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import VMLogger
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -31,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         //Local Logger
-        logger.verbose()
+        /*logger.verbose()
         ViewController.logger.verbose("verbose")
         AppLogger.verbose("verbose")
         logger.debug()
@@ -48,7 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppLogger.error("error")
         logger.severe()
         ViewController.logger.severe("severe")
-        AppLogger.severe("severe")
+        AppLogger.severe("severe")*/
         
         //case
         if let uuid = UIDevice.currentDevice().identifierForVendor?.UUIDString {
