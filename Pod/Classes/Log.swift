@@ -206,12 +206,12 @@ public class Log: BaseLogConfiguration {
      :param:     verboseChannel The `LogChannel` to use for logging messages with
      a `severity` of `.Verbose`.
      */
-    private static func start(root: RootLogConfiguration, eventChannel eventChannel: LogChannel?, severeChannel severChannel: LogChannel?, errorChannel: LogChannel?, warningChannel: LogChannel?, infoChannel: LogChannel?, debugChannel: LogChannel?, verboseChannel: LogChannel?)
+    private static func start(root: RootLogConfiguration, eventChannel: LogChannel?, severeChannel: LogChannel?, errorChannel: LogChannel?, warningChannel: LogChannel?, infoChannel: LogChannel?, debugChannel: LogChannel?, verboseChannel: LogChannel?)
     {
         dispatch_once(&enableOnce) {
             self._root = root
             self._event = eventChannel
-            self._severe = severChannel
+            self._severe = severeChannel
             self._error = errorChannel
             self._warning = warningChannel
             self._info = infoChannel
