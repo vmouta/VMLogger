@@ -23,6 +23,7 @@ struct LogAppenderConstants {
     static let Encoders: String = "encoders"
     static let Filters: String = "filters"
     static let Class: String = "class"
+    static let Custom: String = "custom"
 }
 
 // MARK: - LogAppender

@@ -81,6 +81,16 @@ public class BaseLogAppender: LogAppender
                             returnConfig.formatters.append(PatternLogFormatter(logFormat: pattern))
                         }
                     }
+                } else if let customFormatterConfigs = encodersConfig[LogAppenderConstants.Custom] as? Array<Dictionary<String, AnyObject> >{
+                    for formatterConfig in customFormatterConfigs {
+                        if let className = formatterConfig[LogFormatterConstants.Class] as? String {
+                            if let swiftClass = NSClassFromString(className) as? LogFormatter.Type {
+                                if let filter = swiftClass.init(configuration: formatterConfig) {
+                                    returnConfig.formatters.append(filter)
+                                }
+                            }
+                        }
+                    }
                 }
             } else {
                 returnConfig.formatters.append(DefaultLogFormatter())

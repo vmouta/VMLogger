@@ -18,6 +18,10 @@
 
 import Foundation
 
+struct LogFormatterConstants {
+    static let Class: String = "class"
+}
+
 /**
 `LogFormatter`s are used to attempt to create string representations of
 `LogEntry` instances.
@@ -33,4 +37,13 @@ public protocol LogFormatter
                 receiver could not format the `LogEntry`.
     */
     func formatLogEntry(entry: LogEntry) -> String?
+    
+    /**
+     constructor to be used by introspection
+     
+     - parameter configuration: configuration for the formatter
+     
+     - returns: if configuration is correct a new LogFormatter
+     */
+    init?(configuration: Dictionary<String, AnyObject>)
 }

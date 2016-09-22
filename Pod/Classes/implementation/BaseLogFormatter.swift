@@ -42,6 +42,11 @@ public class BaseLogFormatter: LogFormatter
         self.identityTagLenght = identityTagLenght
     }
     
+    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+        
+        self.init()
+    }
+    
     /**
     Returns a formatted representation of the given `LogEntry`.
     

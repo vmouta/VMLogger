@@ -36,7 +36,8 @@ public class ConsoleLogAppender: BaseLogAppender {
         .Info: .blue,
         .Warning: .orange,
         .Error: .red,
-        .Severe: .whiteOnRed
+        .Severe: .whiteOnRed,
+        .Event: .whiteOnPurple
     ]
     
     public convenience init() {
@@ -44,7 +45,7 @@ public class ConsoleLogAppender: BaseLogAppender {
     }
     
     public init(name: String, formatters: [LogFormatter] = [DefaultLogFormatter()], filters: [LogFilter] = [], xcodeColorsEnabled: Bool = false) {
-        super.init(name: name, formatters: formatters)
+        super.init(name: name, formatters: formatters, filters: filters)
         self.xcodeColorsEnabled = xcodeColorsEnabled
     }
 

@@ -26,7 +26,7 @@ struct LogLevelFilterConstants {
 A `LogFilter` implementation that filters out any `LogEntry` with a 
 `LogSeverity` less than a specified value.
 */
-public struct LogLevelFilter: LogFilter
+public class LogLevelFilter: LogFilter
 {
     /** Returns the `LogSeverity` associated with the receiver. */
     public let severity: LogLevel
@@ -54,7 +54,7 @@ public struct LogLevelFilter: LogFilter
     */
     public func shouldRecordLogEntry(entry: LogEntry) -> Bool
     {
-        return entry.logLevel >= severity
+        return entry.logLevel == severity
     }
     
     /**
@@ -64,7 +64,7 @@ public struct LogLevelFilter: LogFilter
      
      - returns: if configuration is correct a new LogFilter
      */
-    public init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
         if let level = configuration[LogLevelFilterConstants.Level] as? String {
             self.init(severity:LogLevel(level: level))
         } else {

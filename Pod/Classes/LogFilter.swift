@@ -40,7 +40,7 @@ public protocol LogFilter : CustomDebugStringConvertible
     /**
      constructor to be used by introspection
      
-     - parameter configuration: configuration for the appender
+     - parameter configuration: configuration for the filter
      
      - returns: if configuration is correct a new LogFilter
      */

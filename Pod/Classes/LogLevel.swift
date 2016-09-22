@@ -25,6 +25,7 @@ private let InfoString: String = "Info"
 private let WarningString: String = "Warning"
 private let ErrorString: String = "Error"
 private let SevereString: String = "Severe"
+private let EventString: String = "Event"
 private let OffString: String = "OFF"
 
 // MARK: - Enums
@@ -57,9 +58,11 @@ public enum LogLevel: Int, Comparable, CustomStringConvertible {
     case Error      = 5
     
     case Severe     = 6
+    
+    case Event      = 7
 
     /** turn OFF all logging (children can override) */
-    case Off        = 7
+    case Off        = 8
     
     public init(level: String = InfoString) {
         if(AllString.caseInsensitiveCompare(level) == NSComparisonResult.OrderedSame) {
@@ -76,6 +79,8 @@ public enum LogLevel: Int, Comparable, CustomStringConvertible {
             self = .Error
         } else if(SevereString.caseInsensitiveCompare(level) == NSComparisonResult.OrderedSame) {
             self = .Severe
+        } else if(EventString.caseInsensitiveCompare(level) == NSComparisonResult.OrderedSame) {
+            self = .Event
         } else {
             self = .Off
         }
@@ -97,6 +102,8 @@ public enum LogLevel: Int, Comparable, CustomStringConvertible {
             return ErrorString
         case .Severe:
             return SevereString
+        case .Event:
+            return EventString
         case .Off:
             return OffString
         }

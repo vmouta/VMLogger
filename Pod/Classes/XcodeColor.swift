@@ -100,7 +100,8 @@ public struct XcodeColor {
         .Info: .blue,
         .Warning: .orange,
         .Error: .red,
-        .Severe: .whiteOnRed
+        .Severe: .whiteOnRed,
+        .Event: .whiteOnPurple
     ]
     
     public static let red: XcodeColor = {
@@ -141,5 +142,13 @@ public struct XcodeColor {
     
     public static let darkGreen: XcodeColor = {
         return XcodeColor(fg: (0, 128, 0))
+    }()
+
+    public static let purple: XcodeColor = {
+        return XcodeColor(fg: (128, 0, 128))
+    }()
+    
+    public static let whiteOnPurple: XcodeColor = {
+        return XcodeColor(fg: (255, 255, 255), bg: (128, 0, 128))
     }()
 }

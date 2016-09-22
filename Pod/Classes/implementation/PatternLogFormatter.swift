@@ -73,6 +73,10 @@ public class PatternLogFormatter: BaseLogFormatter
         self.pattern = logFormat
     }
     
+    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+        fatalError("init(configuration:) has not been implemented")
+    }
+    
     /**
      Returns a formatted representation of the given `LogEntry`.
      
