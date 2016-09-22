@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ViewController.logger.severe("severe")
         AppLogger.severe("severe")
         //ViewController.logger.event("severe")
-        //AppLogger.event("severe")
+        AppLogger.event("severe")
         
         if let uuid = UIDevice.currentDevice().identifierForVendor?.UUIDString {
             logger.info(uuid)

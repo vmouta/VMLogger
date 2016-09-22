@@ -33,6 +33,7 @@ public class Log: BaseLogConfiguration {
     
     private static var _root: RootLogConfiguration?
     
+    private static var _event: LogChannel?
     private static var _severe: LogChannel?
     private static var _error: LogChannel?
     private static var _warning: LogChannel?
@@ -56,6 +57,7 @@ public class Log: BaseLogConfiguration {
         case .Warning:  return _warning
         case .Error:    return _error
         case .Severe:   return _severe
+        case .Event:    return _event
         default:        return nil
         }
     }
@@ -169,6 +171,7 @@ public class Log: BaseLogConfiguration {
     private static func start(root: RootLogConfiguration, logReceptacle: LogReceptacle, minimumSeverity: LogLevel = .Info)
     {
         start( root,
+            eventChannel: self.createLogChannelWithSeverity(.Event, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
             severeChannel: self.createLogChannelWithSeverity(.Severe, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
             errorChannel: self.createLogChannelWithSeverity(.Error, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
             warningChannel: self.createLogChannelWithSeverity(.Warning, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
@@ -203,10 +206,11 @@ public class Log: BaseLogConfiguration {
      :param:     verboseChannel The `LogChannel` to use for logging messages with
      a `severity` of `.Verbose`.
      */
-    private static func start(root: RootLogConfiguration, severeChannel severChannel: LogChannel?, errorChannel: LogChannel?, warningChannel: LogChannel?, infoChannel: LogChannel?, debugChannel: LogChannel?, verboseChannel: LogChannel?)
+    private static func start(root: RootLogConfiguration, eventChannel eventChannel: LogChannel?, severeChannel severChannel: LogChannel?, errorChannel: LogChannel?, warningChannel: LogChannel?, infoChannel: LogChannel?, debugChannel: LogChannel?, verboseChannel: LogChannel?)
     {
         dispatch_once(&enableOnce) {
             self._root = root
+            self._event = eventChannel
             self._severe = severChannel
             self._error = errorChannel
             self._warning = warningChannel
@@ -435,6 +439,15 @@ public class Log: BaseLogConfiguration {
         Log.value(self, severity: .Severe, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
+    //MARK: * Event
+    public func event(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(self, severity: .Event, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    }
+    
+    public class func event(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(Log.sharedInstance, severity: .Event, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    }
+    
     /**
      Writes program execution trace information to the log using the specified
      severity. This information includes the signature of the calling function,
@@ -532,6 +545,8 @@ public class Log: BaseLogConfiguration {
                 Log.error(description)
             case .Severe:
                 Log.severe(description)
+            case .Event:
+                Log.event(description)
             default:
                 break
         }
