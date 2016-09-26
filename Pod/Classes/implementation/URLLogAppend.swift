@@ -36,13 +36,13 @@ rather not have to think about such details.
 */
 public class URLLogAppend: BaseLogAppender
 {
-    private let url: String
+    internal let url: String
 
-    private let headers: Dictionary<String, String>
+    internal let headers: Dictionary<String, String>
     
-    private let method: String
+    internal let method: String
     
-    private let parameter: String?
+    internal let parameter: String?
 
     /**
     Attempts to initialize a new `FileLogRecorder` instance to use the
@@ -82,6 +82,19 @@ public class URLLogAppend: BaseLogAppender
     }
 
     public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+        guard let config = self.dynamicType.URLLogConfiguration(configuration) else {
+            return nil
+        }
+        
+        self.init(name:config.name, url:config.url, method:config.method, parameter:config.parameter, headers:config.headers, formatters:config.formatters, filters:config.filters)
+    }
+    
+    internal class func URLLogConfiguration(configuration: Dictionary<String, AnyObject>) -> (name: String, url:String, method:String, parameter:String?, headers: Dictionary<String, String>, formatters: [LogFormatter], filters: [LogFilter])?  {
+        
+        guard let config = super.configuration(configuration) else {
+            return nil
+        }
+        
         guard let url = configuration[URLLogAppendContants.ServerUrl] as?  String  else {
             return nil
         }
@@ -94,15 +107,11 @@ public class URLLogAppend: BaseLogAppender
             return nil
         }
         
-        guard let config = self.dynamicType.configuration(configuration) else {
-            return nil
-        }
-        
         let parameter = configuration[URLLogAppendContants.Parameter] as?  String
         
-        self.init(name:config.name, url:url, method: method, parameter:parameter, headers:headers, formatters:config.formatters, filters:config.filters)
+        return (config.0, url, method, parameter, headers, config.1, config.2)
     }
-
+    
     /**
     Called by the `LogReceptacle` to record the specified log message.
     
