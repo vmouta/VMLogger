@@ -65,7 +65,7 @@ public class BaseLogAppender: LogAppender
         }
     }
     
-    internal class func configuration(configuration: Dictionary<String, AnyObject>) -> (name: String, formatters: [LogFormatter], filters: [LogFilter])?  {
+    public class func configuration(configuration: Dictionary<String, AnyObject>) -> (name: String, formatters: [LogFormatter], filters: [LogFilter])?  {
         if let name = configuration[LogAppenderConstants.Name] as? String {
             var returnConfig:(name: String, formatters: [LogFormatter], filters: [LogFilter])
             returnConfig.name = name

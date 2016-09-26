@@ -91,7 +91,7 @@ public class URLLogAppend: BaseLogAppender
     
     internal class func URLLogConfiguration(configuration: Dictionary<String, AnyObject>) -> (name: String, url:String, method:String, parameter:String?, headers: Dictionary<String, String>, formatters: [LogFormatter], filters: [LogFilter])?  {
         
-        guard let config = super.configuration(configuration) else {
+        guard let config = self.configuration(configuration) else {
             return nil
         }
         
@@ -148,15 +148,11 @@ public class URLLogAppend: BaseLogAppender
         }
         
         setRequestHeaders(URLRequest)
-        Alamofire.request(URLRequest)
-            .validate(statusCode: 200..<300)
-            .responseJSON { response in
-                print(response)
-                //to get status code
-                _ = response.response?.statusCode
-                //to get JSON return value
-                _ = response.result.value
-        }
+        request(URLRequest)
+    }
+    
+    internal func request(URLRequest: URLRequestConvertible) -> Request {
+        return Alamofire.request(URLRequest)
     }
     
     internal func setRequestHeaders (request: NSMutableURLRequest) -> Void {
