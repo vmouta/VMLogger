@@ -26,7 +26,7 @@ struct LogFormatterConstants {
 `LogFormatter`s are used to attempt to create string representations of
 `LogEntry` instances.
 */
-public protocol LogFormatter
+public protocol LogFormatter: CustomDebugStringConvertible
 {
     /**
     Called to create a string representation of the passed-in `LogEntry`.
@@ -36,7 +36,7 @@ public protocol LogFormatter
     :returns:   A `String` representation of `entry`, or `nil` if the
                 receiver could not format the `LogEntry`.
     */
-    func formatLogEntry(entry: LogEntry) -> String?
+    func formatLogEntry(_ entry: LogEntry, message: String) -> String?
     
     /**
      constructor to be used by introspection

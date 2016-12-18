@@ -34,7 +34,7 @@ or log pruning. It is the responsibility of the developer to keep the log
 file at a reasonable size. Use `DailyRotatingLogFileRecorder` instead if you'd 
 rather not have to think about such details.
 */
-public class URLLogAppend: BaseLogAppender
+open class URLLogAppend: BaseLogAppender
 {
     internal let url: String
 
@@ -82,16 +82,16 @@ public class URLLogAppend: BaseLogAppender
     }
 
     public required convenience init?(configuration: Dictionary<String, AnyObject>) {
-        guard let config = self.dynamicType.URLLogConfiguration(configuration) else {
+        guard let config = type(of: self).URLLogConfiguration(configuration) else {
             return nil
         }
         
         self.init(name:config.name, url:config.url, method:config.method, parameter:config.parameter, headers:config.headers, formatters:config.formatters, filters:config.filters)
     }
     
-    internal class func URLLogConfiguration(configuration: Dictionary<String, AnyObject>) -> (name: String, url:String, method:String, parameter:String?, headers: Dictionary<String, String>, formatters: [LogFormatter], filters: [LogFilter])?  {
+    internal class func URLLogConfiguration(_ configuration: Dictionary<String, AnyObject>) -> (name: String, url:String, method:String, parameter:String?, headers: Dictionary<String, String>, formatters: [LogFormatter], filters: [LogFilter])?  {
         
-        guard let config = self.configuration(configuration) else {
+        guard let config = self.configuration(configuration: configuration) else {
             return nil
         }
         
@@ -131,31 +131,33 @@ public class URLLogAppend: BaseLogAppender
                 when debug breakpoints are hit. It is not recommended for
                 production code.
     */
-    public override func recordFormattedMessage(message: String, forLogEntry entry: LogEntry, currentQueue: dispatch_queue_t, synchronousMode: Bool)
+    open override func recordFormattedMessage(_ message: String, forLogEntry entry: LogEntry, currentQueue: DispatchQueue, synchronousMode: Bool)
     {
-        let URL = NSURL(string: self.url)!
-        var URLRequest = NSMutableURLRequest(URL: URL)
-        URLRequest.HTTPMethod = self.method
-        switch URLRequest.HTTPMethod {
+        let URL = Foundation.URL(string: self.url)!
+        var URLRequest = NSMutableURLRequest(url: URL)
+        URLRequest.httpMethod = self.method
+        switch URLRequest.httpMethod {
             case "GET":
                 if parameter != nil {
-                    URLRequest = Alamofire.ParameterEncoding.URL.encode(URLRequest, parameters:[self.parameter!:message]).0
+                    
+                    //TODO
+                    //URLRequest = try URLEncoding.queryString.encode(URLRequest as! URLRequestConvertible, with: [self.parameter!:message])
                 }
                 break
             default:
-                URLRequest.HTTPBody = (message as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+                URLRequest.httpBody = (message as NSString).data(using: String.Encoding.utf8.rawValue)
                 break
         }
         
         setRequestHeaders(URLRequest)
-        request(URLRequest)
+        request(URLRequest as! URLRequestConvertible)
     }
     
-    internal func request(URLRequest: URLRequestConvertible) -> Request {
+    internal func request(_ URLRequest: URLRequestConvertible) -> Request {
         return Alamofire.request(URLRequest)
     }
     
-    internal func setRequestHeaders (request: NSMutableURLRequest) -> Void {
+    internal func setRequestHeaders (_ request: NSMutableURLRequest) -> Void {
         for key in self.headers.keys {
             /* Todo add specific values about the app */
             if let value = self.headers[key] {

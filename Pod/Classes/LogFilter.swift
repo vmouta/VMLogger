@@ -35,7 +35,7 @@ public protocol LogFilter : CustomDebugStringConvertible
     
     :returns:   `true` if `entry` should be recorded, `false` if not.
     */
-    func shouldRecordLogEntry(entry: LogEntry) -> Bool
+    func shouldRecordLogEntry(_ entry: LogEntry) -> Bool
     
     /**
      constructor to be used by introspection

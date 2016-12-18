@@ -28,24 +28,24 @@ explicitly known to be an active log file may be removed during the pruning
 process. Therefore, be careful not to store anything in the `directoryPath`
 that you wouldn't mind being deleted when pruning occurs.
 */
-public class DailyRotatingLogFileAppender: BaseLogAppender
+open class DailyRotatingLogFileAppender: BaseLogAppender
 {
     /** The number of days for which the receiver will retain log files
     before they're eligible for pruning. */
-    public let daysToKeep: Int
+    open let daysToKeep: Int
 
     /** The filesystem path to a directory where the log files will be
     stored. */
-    public let directoryPath: String
+    open let directoryPath: String
 
-    private static let filenameFormatter: NSDateFormatter = {
-        let fmt = NSDateFormatter()
+    fileprivate static let filenameFormatter: DateFormatter = {
+        let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd'.log'"
         return fmt
     }()
 
-    private var mostRecentLogTime: NSDate?
-    private var currentFileRecorder: FileLogAppend?
+    fileprivate var mostRecentLogTime: Date?
+    fileprivate var currentFileRecorder: FileLogAppend?
 
     /**
     Attempts to initialize a new `DailyRotatingLogFileRecorder` instance. This
@@ -74,9 +74,9 @@ public class DailyRotatingLogFileAppender: BaseLogAppender
         super.init(name: "DailyRotatingLogFileRecorder[\(directoryPath)]", formatters: formatters)
 
         // try to create the directory that will contain the log files
-        let url = NSURL(fileURLWithPath: directoryPath, isDirectory: true)
+        let url = URL(fileURLWithPath: directoryPath, isDirectory: true)
 
-        try NSFileManager.defaultManager().createDirectoryAtURL(url, withIntermediateDirectories: true, attributes: nil)
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
     }
 
     public required convenience init?(configuration: Dictionary<String, AnyObject>) {
@@ -91,31 +91,31 @@ public class DailyRotatingLogFileAppender: BaseLogAppender
     
     :returns:   The filename.
     */
-    public class func logFilenameForDate(date: NSDate)
+    open class func logFilenameForDate(_ date: Date)
         -> String
     {
-        return filenameFormatter.stringFromDate(date)
+        return filenameFormatter.string(from: date)
     }
 
-    private class func fileLogRecorderForDate(date: NSDate, directoryPath: String, formatters: [LogFormatter])
+    fileprivate class func fileLogRecorderForDate(_ date: Date, directoryPath: String, formatters: [LogFormatter])
         -> FileLogAppend?
     {
         let fileName = self.logFilenameForDate(date)
-        let filePath = (directoryPath as NSString).stringByAppendingPathComponent(fileName)
+        let filePath = (directoryPath as NSString).appendingPathComponent(fileName)
         return FileLogAppend(filePath: filePath, formatters: formatters)
     }
 
-    private func fileLogRecorderForDate(date: NSDate)
+    fileprivate func fileLogRecorderForDate(_ date: Date)
         -> FileLogAppend?
     {
-        return self.dynamicType.fileLogRecorderForDate(date, directoryPath: directoryPath, formatters: formatters)
+        return type(of: self).fileLogRecorderForDate(date, directoryPath: directoryPath, formatters: formatters)
     }
 
-    private func isDate(firstDate: NSDate, onSameDayAs secondDate: NSDate)
+    fileprivate func isDate(_ firstDate: Date, onSameDayAs secondDate: Date)
         -> Bool
     {
-        let firstDateStr = self.dynamicType.logFilenameForDate(firstDate)
-        let secondDateStr = self.dynamicType.logFilenameForDate(secondDate)
+        let firstDateStr = type(of: self).logFilenameForDate(firstDate)
+        let secondDateStr = type(of: self).logFilenameForDate(secondDate)
         return firstDateStr == secondDateStr
     }
 
@@ -138,14 +138,14 @@ public class DailyRotatingLogFileAppender: BaseLogAppender
                 when debug breakpoints are hit. It is not recommended for
                 production code.
     */
-    public override func recordFormattedMessage(message: String, forLogEntry entry: LogEntry, currentQueue: dispatch_queue_t, synchronousMode: Bool)
+    open override func recordFormattedMessage(_ message: String, forLogEntry entry: LogEntry, currentQueue: DispatchQueue, synchronousMode: Bool)
 
     {
-        if mostRecentLogTime == nil || !self.isDate(entry.timestamp, onSameDayAs: mostRecentLogTime!) {
+        if mostRecentLogTime == nil || !self.isDate(entry.timestamp as Date, onSameDayAs: mostRecentLogTime!) {
             prune()
-            currentFileRecorder = fileLogRecorderForDate(entry.timestamp)
+            currentFileRecorder = fileLogRecorderForDate(entry.timestamp as Date)
         }
-        mostRecentLogTime = entry.timestamp
+        mostRecentLogTime = entry.timestamp as Date
 
         currentFileRecorder?.recordFormattedMessage(message, forLogEntry: entry, currentQueue: queue, synchronousMode: synchronousMode)
     }
@@ -160,30 +160,30 @@ public class DailyRotatingLogFileAppender: BaseLogAppender
     careful not to store anything in this directory that you wouldn't mind
     being deleted when pruning occurs.
     */
-    public func prune()
+    open func prune()
     {
         // figure out what files we'd want to keep, then nuke everything else
-        let cal = NSCalendar.currentCalendar()
-        var date = NSDate()
+        let cal = Calendar.current
+        var date = Date()
         var filesToKeep = Set<String>()
         for _ in 0..<daysToKeep {
-            let filename = self.dynamicType.logFilenameForDate(date)
+            let filename = type(of: self).logFilenameForDate(date)
             filesToKeep.insert(filename)
-            date = cal.dateByAddingUnit(.Day, value: -1, toDate: date, options: .WrapComponents)!
+            date = (cal as NSCalendar).date(byAdding: .day, value: -1, to: date, options: .wrapComponents)!
         }
 
         do {
-            let fileMgr = NSFileManager.defaultManager()
-            let filenames = try fileMgr.contentsOfDirectoryAtPath(directoryPath)
+            let fileMgr = FileManager.default
+            let filenames = try fileMgr.contentsOfDirectory(atPath: directoryPath)
 
             let pathsToRemove = filenames
                 .filter { return !$0.hasPrefix(".") }
                 .filter { return !filesToKeep.contains($0) }
-                .map { return (self.directoryPath as NSString).stringByAppendingPathComponent($0) }
+                .map { return (self.directoryPath as NSString).appendingPathComponent($0) }
 
             for path in pathsToRemove {
                 do {
-                    try fileMgr.removeItemAtPath(path)
+                    try fileMgr.removeItem(atPath: path)
                 }
                 catch {
                     print("Error attempting to delete the unneeded file <\(path)>: \(error)")

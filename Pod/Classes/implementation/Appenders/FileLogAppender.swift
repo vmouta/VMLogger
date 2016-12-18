@@ -30,13 +30,13 @@ or log pruning. It is the responsibility of the developer to keep the log
 file at a reasonable size. Use `DailyRotatingLogFileRecorder` instead if you'd 
 rather not have to think about such details.
 */
-public class FileLogAppend: BaseLogAppender
+open class FileLogAppend: BaseLogAppender
 {
     /** The path of the file to which log messages will be written. */
-    public let filePath: String
+    open let filePath: String
 
-    private let file: UnsafeMutablePointer<FILE>
-    private let newlineCharset: NSCharacterSet
+    fileprivate let file: UnsafeMutablePointer<FILE>?
+    fileprivate let newlineCharset: CharacterSet
 
     /**
     Attempts to initialize a new `FileLogRecorder` instance to use the
@@ -69,15 +69,15 @@ public class FileLogAppend: BaseLogAppender
      */
     public init?(name:String, filePath: String, formatters: [LogFormatter] = [DefaultLogFormatter()], filters:[LogFilter] = [])
     {
-        let dirs : [String] = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true)
+        let dirs : [String] = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.allDomainsMask, true)
         let dir = dirs[0] //documents directory
         let nsSt = (dir as NSString)
-        let fileNamePath = nsSt.stringByAppendingPathComponent(filePath)
+        let fileNamePath = nsSt.appendingPathComponent(filePath)
         let f = fopen(fileNamePath, "a")
         if f != nil  {
             self.filePath = fileNamePath;
             self.file = f;
-            self.newlineCharset = NSCharacterSet.newlineCharacterSet()
+            self.newlineCharset = CharacterSet.newlines
             super.init(name:name, formatters: formatters, filters:filters)
         } else {
             return nil
@@ -89,7 +89,7 @@ public class FileLogAppend: BaseLogAppender
             return nil
         }
         
-        guard let config = self.dynamicType.configuration(configuration) else {
+        guard let config = type(of: self).configuration(configuration: configuration) else {
             return nil
         }
         self.init(name:config.name, filePath:filePath, formatters:config.formatters, filters:config.filters)
@@ -122,13 +122,13 @@ public class FileLogAppend: BaseLogAppender
                 when debug breakpoints are hit. It is not recommended for
                 production code.
     */
-    public override func recordFormattedMessage(message: String, forLogEntry entry: LogEntry, currentQueue: dispatch_queue_t, synchronousMode: Bool)
+    open override func recordFormattedMessage(_ message: String, forLogEntry entry: LogEntry, currentQueue: DispatchQueue, synchronousMode: Bool)
     {
         var addNewline = true
         let uniStr = message.unicodeScalars
         if uniStr.count > 0 {
-            let c = unichar(uniStr[uniStr.endIndex.predecessor()].value)
-            addNewline = !newlineCharset.characterIsMember(c)
+            let c = unichar(uniStr[uniStr.index(before: uniStr.endIndex)].value)
+            addNewline = !newlineCharset.contains(UnicodeScalar(c)!)
         }
 
         var writeStr = message

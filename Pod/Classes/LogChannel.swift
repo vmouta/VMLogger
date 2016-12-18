@@ -73,12 +73,12 @@ public struct LogChannel
                 the line number issuing the call to this function. **You should
                 not provide a value for this parameter.**
     */
-    public func trace(logger: LogConfiguration, function: String = #function, filePath: String = #file, fileLine: Int = #line)
+    public func trace(_ logger: LogConfiguration, function: String = #function, filePath: String = #file, fileLine: Int = #line)
     {
         var threadID: UInt64 = 0
         pthread_threadid_np(nil, &threadID)
 
-        let entry = LogEntry(logger: logger, payload: .Trace, logLevel: severity, callingFunction: function, callingFilePath: filePath, callingFileLine: fileLine, callingThreadID: threadID)
+        let entry = LogEntry(logger: logger, payload: .trace, logLevel: severity, callingFunction: function, callingFilePath: filePath, callingFileLine: fileLine, callingThreadID: threadID)
         receptacle.log(entry)
     }
 
@@ -99,12 +99,12 @@ public struct LogChannel
                 the line number issuing the call to this function. **You should
                 not provide a value for this parameter.**
     */
-    public func message(logger: LogConfiguration, msg: String, function: String = #function, filePath: String = #file, fileLine: Int = #line)
+    public func message(_ logger: LogConfiguration, msg: String, function: String = #function, filePath: String = #file, fileLine: Int = #line)
     {
         var threadID: UInt64 = 0
         pthread_threadid_np(nil, &threadID)
 
-        let entry = LogEntry(logger: logger, payload: .Message(msg), logLevel: severity, callingFunction: function, callingFilePath: filePath, callingFileLine: fileLine, callingThreadID: threadID)
+        let entry = LogEntry(logger: logger, payload: .message(msg), logLevel: severity, callingFunction: function, callingFilePath: filePath, callingFileLine: fileLine, callingThreadID: threadID)
         receptacle.log(entry)
     }
 
@@ -128,12 +128,12 @@ public struct LogChannel
                 the line number issuing the call to this function. **You should
                 not provide a value for this parameter.**
     */
-    public func value(logger: LogConfiguration, value: Any?, function: String = #function, filePath: String = #file, fileLine: Int = #line)
+    public func value(_ logger: LogConfiguration, value: Any?, function: String = #function, filePath: String = #file, fileLine: Int = #line)
     {
         var threadID: UInt64 = 0
         pthread_threadid_np(nil, &threadID)
 
-        let entry = LogEntry(logger: logger, payload: .Value(value), logLevel: severity, callingFunction: function, callingFilePath: filePath, callingFileLine: fileLine, callingThreadID: threadID)
+        let entry = LogEntry(logger: logger, payload: .value(value), logLevel: severity, callingFunction: function, callingFilePath: filePath, callingFileLine: fileLine, callingThreadID: threadID)
         receptacle.log(entry)
     }
 }

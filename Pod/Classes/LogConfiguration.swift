@@ -51,13 +51,13 @@ public protocol LogConfiguration: CustomDebugStringConvertible
     
     var children: [LogConfiguration] { get }
     
-    func addChildren(child: LogConfiguration, copyGrandChildren:Bool)
+    func addChildren(_ child: LogConfiguration, copyGrandChildren:Bool)
     
-    func getChildren(name: String) -> LogConfiguration?
+    func getChildren(_ name: String) -> LogConfiguration?
     
     func fullName() -> String
     
     func details() -> String
     
-    func setParent(parent: LogConfiguration)
+    func setParent(_ parent: LogConfiguration)
 }

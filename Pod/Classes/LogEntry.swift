@@ -28,13 +28,13 @@ public struct LogEntry {
     public enum Payload
     {
         /** The log entry is a trace call and contains no explicit payload. */
-        case Trace
+        case trace
         
         /** The payload contains a text message. */
-        case Message(String)
+        case message(String)
         
         /** The payload contains an arbitrary value, or `nil`. */
-        case Value(Any?)
+        case value(Any?)
     }
     
      /** The payload of the log entry. */
@@ -58,7 +58,10 @@ public struct LogEntry {
     public let callingThreadID: UInt64
     
     /** The time at which the `LogEntry` was created. */
-    public let timestamp: NSDate
+    public let timestamp: Date
+    
+    /** Dictionary to store miscellaneous data about the log, can be used by formatters and filters etc. Please prefix any keys to help avoid collissions. */
+    public var userInfo: [String: Any]
     
     /**
      `LogEntry` initializer.
@@ -82,7 +85,7 @@ public struct LogEntry {
      :param:     timestamp The time at which the log entry was created. Defaults
      to the current time if not specified.
      */
-    public init(logger: LogConfiguration, payload: Payload, logLevel: LogLevel, callingFunction: String, callingFilePath: String, callingFileLine: Int, callingThreadID: UInt64, timestamp: NSDate = NSDate()) {
+    public init(logger: LogConfiguration, payload: Payload, logLevel: LogLevel, callingFunction: String, callingFilePath: String, callingFileLine: Int, callingThreadID: UInt64, timestamp: Date = Date()) {
         self.logger = logger
         self.payload = payload
         self.logLevel = logLevel
@@ -91,5 +94,6 @@ public struct LogEntry {
         self.callingFileLine = callingFileLine
         self.callingThreadID = callingThreadID
         self.timestamp = timestamp
+        self.userInfo = [:]
     }
 }

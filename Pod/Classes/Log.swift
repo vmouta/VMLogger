@@ -20,7 +20,7 @@ import Foundation
 
 // MARK: - Log
 // - The main logging class
-public class Log: BaseLogConfiguration {
+open class Log: BaseLogConfiguration {
 
     private static let LoggerInfoFile: String = "VMLogger-Info"
     private static let LoggerConfig: String = "LOGGER_CONFIG"
@@ -28,8 +28,6 @@ public class Log: BaseLogConfiguration {
     private static let LoggerLevel: String = "LOGGER_LEVEL"
     private static let LoggerSynchronous: String = "LOGGER_SYNCHRONOUS"
     private static let Appenders: String = "APPENDERS"
-    
-    private static var enableOnce = dispatch_once_t()
     
     private static var _root: RootLogConfiguration?
     
@@ -43,7 +41,7 @@ public class Log: BaseLogConfiguration {
     
     public static var sharedInstance: LogConfiguration {
         if(_root == nil) {
-            start(RootLogConfiguration(), logReceptacle: LogReceptacle())
+            start(root: RootLogConfiguration(), logReceptacle: LogReceptacle())
         }
         return _root!;
     }
@@ -51,19 +49,19 @@ public class Log: BaseLogConfiguration {
     private static func channelForSeverity(severity: LogLevel) -> LogChannel?
     {
         switch severity {
-        case .Verbose:  return _verbose
-        case .Debug:    return _debug
-        case .Info:     return _info
-        case .Warning:  return _warning
-        case .Error:    return _error
-        case .Severe:   return _severe
-        case .Event:    return _event
+        case .verbose:  return _verbose
+        case .debug:    return _debug
+        case .info:     return _info
+        case .warning:  return _warning
+        case .error:    return _error
+        case .severe:   return _severe
+        case .event:    return _event
         default:        return nil
         }
     }
     
     public static func enableFromFile(fileName: String = Log.LoggerInfoFile) {
-        if let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "plist"), let dict = NSDictionary(contentsOfFile: path) {
+        if let path = Bundle.main.path(forResource: fileName, ofType: "plist"), let dict = NSDictionary(contentsOfFile: path) {
             self.enable(dict)
         } else {
             ///  No zucred configuration file, set default values
@@ -77,18 +75,18 @@ public class Log: BaseLogConfiguration {
         }
     }
 
-    public static func enable(values: NSDictionary) {
+    public static func enable(_ values: NSDictionary) {
         #if DEBUG
-            var rootLevel: LogLevel = .Debug
+            var rootLevel: LogLevel = .debug
         #else
-            var rootLevel: LogLevel = .Info
+            var rootLevel: LogLevel = .info
         #endif
         var rootSynchronous = false
         var appenders: [String:LogAppender] = [:]
         var rootAppenders: [LogAppender] = []
         
         /// Appenders for the log
-        if let appendersConfig = values.valueForKey(Log.Appenders) as? Array<Dictionary<String, AnyObject> > {
+        if let appendersConfig = values.value(forKey: Log.Appenders) as? Array<Dictionary<String, AnyObject> > {
             for appenderConfig in appendersConfig {
                 if let className = appenderConfig[LogAppenderConstants.Class] as? String {
                     if let swiftClass = NSClassFromString(className) as? LogAppender.Type {
@@ -101,7 +99,7 @@ public class Log: BaseLogConfiguration {
         }
         
         /// Root Appenders
-        if let rootAppendersConfig = values.valueForKey(Log.LoggerAppenders) as? Array<String> {
+        if let rootAppendersConfig = values.value(forKey: Log.LoggerAppenders) as? Array<String> {
             for rootAppender in rootAppendersConfig {
                 if let appender = appenders[rootAppender] {
                     rootAppenders.append(appender)
@@ -111,22 +109,22 @@ public class Log: BaseLogConfiguration {
             rootAppenders.append(appender)
         }
         /// Root Log Level
-        if let rootLoggerLevel = values.valueForKey(Log.LoggerLevel) as? String {
+        if let rootLoggerLevel = values.value(forKey: Log.LoggerLevel) as? String {
             rootLevel = LogLevel(level: rootLoggerLevel)
         }
         // Root synchronous mode
-        if let rootLoggerSynchronous = values.valueForKey(Log.LoggerSynchronous) as? Bool {
+        if let rootLoggerSynchronous = values.value(forKey: Log.LoggerSynchronous) as? Bool {
             rootSynchronous = rootLoggerSynchronous
         }
-        Log.enable(RootLogConfiguration(assignedLevel:rootLevel, appenders:rootAppenders, synchronousMode:rootSynchronous), minimumSeverity:rootLevel)
+        Log.enable(root: RootLogConfiguration(assignedLevel:rootLevel, appenders:rootAppenders, synchronousMode:rootSynchronous), minimumSeverity:rootLevel)
         
         /// Logs Configuration
-        if let logsConfig = values.valueForKey(Log.LoggerConfig) as? Dictionary<String, AnyObject> {
+        if let logsConfig = values.value(forKey: Log.LoggerConfig) as? Dictionary<String, AnyObject> {
             for (logName, configValue) in logsConfig {
                 if let configuration = configValue as? Dictionary<String, AnyObject> {
                     let currentChild = self.getLogger(logName)
                     if let parent = currentChild.parent {
-                        let newChild = self.init(identifier: currentChild.identifier, parent: parent, allAppenders:appenders, configuration: configuration)
+                        let newChild = self.init(currentChild.identifier, parent: parent, allAppenders:appenders, configuration: configuration)
                         parent.addChildren(newChild!, copyGrandChildren: true)
                     } else {
                         // Changing root configuration
@@ -157,27 +155,27 @@ public class Log: BaseLogConfiguration {
      help ensure that messages send prior to hitting a breakpoint
      will appear in the console when the breakpoint is hit.
      */
-    public static func enable(assignedLevel: LogLevel = .Info, synchronousMode: Bool = false)
+    public static func enable(assignedLevel: LogLevel = .info, synchronousMode: Bool = false)
     {
         let root = RootLogConfiguration(assignedLevel: assignedLevel, appenders:[ConsoleLogAppender()], synchronousMode:synchronousMode)
-        Log.start(root, logReceptacle: LogReceptacle(), minimumSeverity: root.effectiveLevel)
+        Log.start(root: root, logReceptacle: LogReceptacle(), minimumSeverity: root.effectiveLevel)
     }
     
     public static func enable(root: RootLogConfiguration, minimumSeverity: LogLevel)
     {
-        Log.start(root, logReceptacle: LogReceptacle(), minimumSeverity: minimumSeverity)
+        Log.start(root: root, logReceptacle: LogReceptacle(), minimumSeverity: minimumSeverity)
     }
     
-    private static func start(root: RootLogConfiguration, logReceptacle: LogReceptacle, minimumSeverity: LogLevel = .Info)
+    private static func start(root: RootLogConfiguration, logReceptacle: LogReceptacle, minimumSeverity: LogLevel = .info)
     {
-        start( root,
-            eventChannel: self.createLogChannelWithSeverity(.Event, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
-            severeChannel: self.createLogChannelWithSeverity(.Severe, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
-            errorChannel: self.createLogChannelWithSeverity(.Error, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
-            warningChannel: self.createLogChannelWithSeverity(.Warning, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
-            infoChannel: self.createLogChannelWithSeverity(.Info, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
-            debugChannel: self.createLogChannelWithSeverity(.Debug, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
-            verboseChannel: self.createLogChannelWithSeverity(.Verbose, receptacle: logReceptacle, minimumSeverity: minimumSeverity)
+        start( root: root,
+            eventChannel: self.createLogChannelWithSeverity(severity: .event, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
+            severeChannel: self.createLogChannelWithSeverity(severity: .severe, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
+            errorChannel: self.createLogChannelWithSeverity(severity: .error, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
+            warningChannel: self.createLogChannelWithSeverity(severity: .warning, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
+            infoChannel: self.createLogChannelWithSeverity(severity: .info, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
+            debugChannel: self.createLogChannelWithSeverity(severity: .debug, receptacle: logReceptacle, minimumSeverity: minimumSeverity),
+            verboseChannel: self.createLogChannelWithSeverity(severity: .verbose, receptacle: logReceptacle, minimumSeverity: minimumSeverity)
         )
     }
     
@@ -208,7 +206,7 @@ public class Log: BaseLogConfiguration {
      */
     private static func start(root: RootLogConfiguration, eventChannel: LogChannel?, severeChannel: LogChannel?, errorChannel: LogChannel?, warningChannel: LogChannel?, infoChannel: LogChannel?, debugChannel: LogChannel?, verboseChannel: LogChannel?)
     {
-        dispatch_once(&enableOnce) {
+        let enableOnce: () = {
             self._root = root
             self._event = eventChannel
             self._severe = severeChannel
@@ -217,7 +215,8 @@ public class Log: BaseLogConfiguration {
             self._info = infoChannel
             self._debug = debugChannel
             self._verbose = verboseChannel
-        }
+        }()
+        _ = enableOnce
     }
     
     private static func createLogChannelWithSeverity(severity: LogLevel, receptacle: LogReceptacle, minimumSeverity: LogLevel) -> LogChannel?
@@ -228,7 +227,7 @@ public class Log: BaseLogConfiguration {
         return nil
     }
     
-    public class func getLogger(identifier: String) -> LogConfiguration {
+    public class func getLogger(_ identifier: String) -> LogConfiguration {
         
         var name = identifier
         var parent: LogConfiguration = Log.sharedInstance
@@ -236,26 +235,26 @@ public class Log: BaseLogConfiguration {
             if let child = parent.getChildren(name) {
                 return child
             } else {
-                var token: [String] = name.componentsSeparatedByString(BaseLogConfiguration.DOT)
+                var token: [String] = name.components(separatedBy: BaseLogConfiguration.DOT)
                 if token.count == 1 {
-                    let child = self.init(identifier: token[0], parent: parent)
+                    let child = self.init(token[0], parent: parent)
                     parent.addChildren(child, copyGrandChildren: true)
                     return child
                 } else {
                     var child = parent.getChildren(token[0])
                     if child == nil  {
-                        child = self.init(identifier: token[0], parent: parent)
+                        child = self.init(token[0], parent: parent)
                         parent.addChildren(child!, copyGrandChildren: true)
                     }
                     parent = child!
-                    let range = name.rangeOfString(BaseLogConfiguration.DOT)!
-                    name = name.substringFromIndex(range.endIndex)
+                    let range = name.range(of: BaseLogConfiguration.DOT)!
+                    name = name.substring(from: range.upperBound)
                 }
             }
         }
     }
     
-    public required init?(identifier: String, parent: LogConfiguration, allAppenders:[String:LogAppender], configuration: Dictionary<String,AnyObject>) {
+    public required init?(_ identifier: String, parent: LogConfiguration, allAppenders:[String:LogAppender], configuration: Dictionary<String,AnyObject>) {
         var additivity = true
         var logLevel:LogLevel? = nil
         var appenders: [LogAppender] = []
@@ -281,171 +280,171 @@ public class Log: BaseLogConfiguration {
                 }
             }
         }
-        super.init(identifier: identifier, assignedLevel:logLevel, parent:parent, appenders:appenders, additivity:additivity, synchronousMode:synchronous)
+        super.init(identifier: identifier, assignedLevel:logLevel, parent:parent, appenders:appenders, synchronousMode:synchronous, additivity:additivity)
     }
     
-    public required init(identifier: String, parent: LogConfiguration){
+    public required init(_ identifier: String, parent: LogConfiguration){
         super.init(identifier: identifier, assignedLevel:nil, parent: parent, appenders: [], synchronousMode:parent.synchronousMode)
     }
     
     // MARK: - Convenience logging methods
     // MARK: * Verbose
     public class func verbose(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(Log.sharedInstance, severity: .Verbose, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: Log.sharedInstance, severity: .verbose, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func verbose(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(Log.sharedInstance, severity: .Verbose, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func verbose(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: Log.sharedInstance, severity: .verbose, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func verbose(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(Log.sharedInstance, severity: .Verbose, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func verbose(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: Log.sharedInstance, severity: .verbose, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func verbose(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(self, severity: .Verbose, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: self, severity: .verbose, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func verbose(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(self, severity: .Verbose, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func verbose(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: self, severity: .verbose, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func verbose(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(self, severity: .Verbose, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func verbose(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: self, severity: .verbose, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     // MARK: * Debug
     public class func debug(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(Log.sharedInstance, severity: .Debug, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: Log.sharedInstance, severity: .debug, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func debug(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(Log.sharedInstance, severity: .Debug, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func debug(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: Log.sharedInstance, severity: .debug, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func debug(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(Log.sharedInstance, severity: .Debug, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func debug(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: Log.sharedInstance, severity: .debug, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func debug(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(self, severity: .Debug, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: self, severity: .debug, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func debug(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(self, severity: .Debug, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func debug(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: self, severity: .debug, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func debug(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(self, severity: .Debug, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func debug(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: self, severity: .debug, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     // MARK: * Info
     public class func info(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(Log.sharedInstance, severity: .Info, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: Log.sharedInstance, severity: .info, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func info(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(Log.sharedInstance, severity: .Info, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func info(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: Log.sharedInstance, severity: .info, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func info(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(Log.sharedInstance, severity: .Info, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func info(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: Log.sharedInstance, severity: .info, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func info(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(self, severity: .Info, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: self, severity: .info, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func info(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(self, severity: .Info, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func info(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: self, severity: .info, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func info(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(self, severity: .Info, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func info(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: self, severity: .info, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     // MARK: * Warning
     public class func warning(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(Log.sharedInstance, severity: .Warning, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: Log.sharedInstance, severity: .warning, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func warning(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(Log.sharedInstance, severity: .Warning, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func warning(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: Log.sharedInstance, severity: .warning, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func warning(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(Log.sharedInstance, severity: .Warning, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func warning(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: Log.sharedInstance, severity: .warning, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func warning(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(self, severity: .Warning, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: self, severity: .warning, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func warning(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(self, severity: .Warning, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func warning(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: self, severity: .warning, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func warning(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(self, severity: .Warning, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func warning(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: self, severity: .warning, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     // MARK: * Error
     public class func error(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(Log.sharedInstance, severity: .Error, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: Log.sharedInstance, severity: .error, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func error(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(Log.sharedInstance, severity: .Error, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func error(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: Log.sharedInstance, severity: .error, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func error(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(Log.sharedInstance, severity: .Error, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func error(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: Log.sharedInstance, severity: .error, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func error(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(self, severity: .Error, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: self, severity: .error, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func error(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(self, severity: .Error, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func error(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: self, severity: .error, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func error(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(self, severity: .Error, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func error(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: self, severity: .error, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     // MARK: * Severe
     public class func severe(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(Log.sharedInstance, severity: .Severe, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: Log.sharedInstance, severity: .severe, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func severe(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(Log.sharedInstance, severity: .Severe, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func severe(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: Log.sharedInstance, severity: .severe, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func severe(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(Log.sharedInstance, severity: .Severe, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func severe(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: Log.sharedInstance, severity: .severe, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func severe(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.trace(self, severity: .Severe, function: functionName, filePath: fileName, fileLine: lineNumber)
+        Log.trace(logger: self, severity: .severe, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func severe(message message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.message(self, severity: .Severe, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func severe(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.message(logger: self, severity: .severe, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public func severe(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(self, severity: .Severe, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func severe(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: self, severity: .severe, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     //MARK: * Event
-    public func event(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(self, severity: .Event, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public func event(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: self, severity: .event, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
-    public class func event(value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        Log.value(Log.sharedInstance, severity: .Event, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+    public class func event(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        Log.value(logger: Log.sharedInstance, severity: .event, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     /**
@@ -470,7 +469,7 @@ public class Log: BaseLogConfiguration {
      */
     private static func trace(logger: LogConfiguration, severity: LogLevel, function: String = #function, filePath: String = #file, fileLine: Int = #line)
     {
-        channelForSeverity(severity)?.trace(logger, function: function, filePath: filePath, fileLine: fileLine)
+        channelForSeverity(severity: severity)?.trace(logger, function: function, filePath: filePath, fileLine: fileLine)
     }
     
     /**
@@ -494,7 +493,7 @@ public class Log: BaseLogConfiguration {
      */
     private static func message(logger: LogConfiguration, severity: LogLevel, message: String, function: String = #function, filePath: String = #file, fileLine: Int = #line)
     {
-        channelForSeverity(severity)?.message(logger, msg: message, function: function, filePath: filePath, fileLine: fileLine)
+        channelForSeverity(severity: severity)?.message(logger, msg: message, function: function, filePath: filePath, fileLine: fileLine)
     }
     
     /**
@@ -521,10 +520,10 @@ public class Log: BaseLogConfiguration {
      */
     private static func value(logger: LogConfiguration, severity: LogLevel, value: Any?, function: String = #function, filePath: String = #file, fileLine: Int = #line)
     {
-        channelForSeverity(severity)?.value(logger, value: value, function: function, filePath: filePath, fileLine: fileLine)
+        channelForSeverity(severity: severity)?.value(logger, value: value, function: function, filePath: filePath, fileLine: fileLine)
     }
     
-    public static func dumpLog(log: LogConfiguration = Log.sharedInstance, severity: LogLevel = .Info) {
+    public static func dumpLog(log: LogConfiguration = Log.sharedInstance, severity: LogLevel = .info) {
         var description = "assigned: "
         if let assignedLevel = log.assignedLevel?.description {
             description = description + String(assignedLevel.characters.first! as Character)
@@ -533,25 +532,25 @@ public class Log: BaseLogConfiguration {
         description = description + " | appenders: " + log.appenders.description
         description = description + " | name: " + log.fullName()
         switch(severity) {
-            case .Verbose:
+            case .verbose:
                 Log.verbose(description)
-            case .Debug:
+            case .debug:
                 Log.debug(description)
-            case .Info:
+            case .info:
                 Log.info(description)
-            case .Warning:
+            case .warning:
                 Log.warning(description)
-            case .Error:
+            case .error:
                 Log.error(description)
-            case .Severe:
+            case .severe:
                 Log.severe(description)
-            case .Event:
+            case .event:
                 Log.event(description)
             default:
                 break
         }
         for child in log.children {
-            Log.dumpLog(child, severity:severity)
+            Log.dumpLog(log: child, severity:severity)
         }
     }
 }

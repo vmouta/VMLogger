@@ -18,18 +18,18 @@
 
 import Foundation
 
-struct LogLevelFilterConstants {
-    static let Level: String = "level"
+struct ValueTypeFilterConstants {
+    static let Types: String = "types"
 }
 
 /**
 A `LogFilter` implementation that filters out any `LogEntry` with a 
 `LogSeverity` less than a specified value.
 */
-public class LogLevelFilter: LogFilter
+open class ValueTypeFilter: LogFilter
 {
     /** Returns the `LogSeverity` associated with the receiver. */
-    public let severity: LogLevel
+    open let types: [String]
 
     /**
     Initializes a new `LogSeverityFilter` instance.
@@ -39,9 +39,9 @@ public class LogLevelFilter: LogFilter
                 recorded. Only those log entries with a severity equal to
                 or more severe than this value will pass through the filter.
     */
-    public init(severity: LogLevel)
+    public init(types: [String])
     {
-        self.severity = severity
+        self.types = types
     }
 
     /**
@@ -52,9 +52,20 @@ public class LogLevelFilter: LogFilter
     :returns:   `true` if `entry.severity` is as or more severe than the
                 receiver's `severity` property; `false` otherwise.
     */
-    public func shouldRecordLogEntry(entry: LogEntry) -> Bool
+    open func shouldRecordLogEntry(_ entry: LogEntry) -> Bool
     {
-        return entry.logLevel == severity
+        switch (entry.payload) {
+        case .value(let object):
+            if object != nil {
+                _ = String(describing: type(of: object!)).components(separatedBy: "__").last!
+                let typeName = String(describing: type(of: object!))
+                return self.types.contains(typeName)
+            } else {
+                return false
+            }
+        default:
+            return false
+        }
     }
     
     /**
@@ -65,17 +76,17 @@ public class LogLevelFilter: LogFilter
      - returns: if configuration is correct a new LogFilter
      */
     public required convenience init?(configuration: Dictionary<String, AnyObject>) {
-        if let level = configuration[LogLevelFilterConstants.Level] as? String {
-            self.init(severity:LogLevel(level: level))
+        if let types = configuration[ValueTypeFilterConstants.Types] as? [String] {
+            self.init(types:types)
         } else {
             return nil
         }
     }
     
     // MARK: - CustomDebugStringConvertible
-    public var debugDescription: String {
+    open var debugDescription: String {
         get {
-            return "\(Mirror(reflecting: self).subjectType): \(severity)"
+            return "\(Mirror(reflecting: self).subjectType): \(types)"
         }
     }
 }

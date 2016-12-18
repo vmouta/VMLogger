@@ -25,7 +25,7 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    @IBAction func dump(sender: AnyObject) {
+    @IBAction func dump(_ sender: AnyObject) {
         AppLogger.dump()
     }
 }

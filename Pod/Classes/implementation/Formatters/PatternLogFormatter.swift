@@ -17,7 +17,31 @@
  */
 
 import Foundation
-import UIKit
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 struct PatternLogFormatterConstants {
     static let Pattern = "pattern"
@@ -29,35 +53,35 @@ protocol.
 
 This implementation is used by default if no other log formatters are specified.
 */
-public class PatternLogFormatter: BaseLogFormatter
+open class PatternLogFormatter: BaseLogFormatter
 {
 
-    public static let defaultLogFormat: String = "%.30d [%thread] %-7p %-20.-20c - %m"
+    open static let defaultLogFormat: String = "%.30d [%thread] %-7p %-20.-20c - %m"
     
-    public static let lenghtPattern:String = "([-]?\\d{1,2}[.][-]?\\d{1,2}|[.][-]?\\d{1,2}|[-]?\\d{1,2})"
+    open static let lenghtPattern:String = "([-]?\\d{1,2}[.][-]?\\d{1,2}|[.][-]?\\d{1,2}|[-]?\\d{1,2})"
     
-    public static let MDC: String = "%" + lenghtPattern + "?" + "(X)"
-    public static let identifier: String = "%" + lenghtPattern + "?" + "(logger|lo|c)"
-    public static let level: String = "%" + lenghtPattern + "?" + "(level|le|p)"
-    public static let date: String = "%" + lenghtPattern + "?" + "(date|d)"
-    public static let message: String = "%" + lenghtPattern + "?" + "(message|msg|m)"
+    open static let MDC: String = "%" + lenghtPattern + "?" + "(X)"
+    open static let identifier: String = "%" + lenghtPattern + "?" + "(logger|lo|c)"
+    open static let level: String = "%" + lenghtPattern + "?" + "(level|le|p)"
+    open static let date: String = "%" + lenghtPattern + "?" + "(date|d)"
+    open static let message: String = "%" + lenghtPattern + "?" + "(message|msg|m)"
     
-    public static let tread: String = "%" + lenghtPattern + "?" + "(thread|t)"
+    open static let tread: String = "%" + lenghtPattern + "?" + "(thread|t)"
     
-    public static let caller: String = "%" + lenghtPattern + "?" + "(Caller)"
-    public static let function: String = "%" + lenghtPattern + "?" + "(M|Method)"
-    public static let file: String = "%" + lenghtPattern + "?" + "(F|file)"
-    public static let line: String = "%" + lenghtPattern + "?" + "(L|line)"
+    open static let caller: String = "%" + lenghtPattern + "?" + "(Caller)"
+    open static let function: String = "%" + lenghtPattern + "?" + "(M|Method)"
+    open static let file: String = "%" + lenghtPattern + "?" + "(F|file)"
+    open static let line: String = "%" + lenghtPattern + "?" + "(L|line)"
     
-    public static let lineSeparator: String = "%n"
+    open static let lineSeparator: String = "%n"
 
-    public static let grouping: String = "%" + lenghtPattern + "[(].{1,}[)]"
+    open static let grouping: String = "%" + lenghtPattern + "[(].{1,}[)]"
 
     
-    private static let patterns: [String] = [MDC,identifier,level,date,message,tread,caller,function,file,line,lineSeparator]
+    fileprivate static let patterns: [String] = [MDC,identifier,level,date,message,tread,caller,function,file,line,lineSeparator]
     //private static let patterns: [String] = [date]
     
-    private var pattern: String
+    fileprivate var pattern: String
     
     /**
      Initializes the DefaultLogFormatter using the given settings.
@@ -74,7 +98,11 @@ public class PatternLogFormatter: BaseLogFormatter
     }
     
     public required convenience init?(configuration: Dictionary<String, AnyObject>) {
-        fatalError("init(configuration:) has not been implemented")
+        
+        guard let pattern = configuration[PatternLogFormatterConstants.Pattern] as?  String  else {
+            return nil
+        }
+        self.init(logFormat: pattern)
     }
     
     /**
@@ -85,36 +113,37 @@ public class PatternLogFormatter: BaseLogFormatter
      :returns:       The formatted representation of `entry`. This particular
      implementation will never return `nil`.
      */
-    override public func formatLogEntry(entry: LogEntry) -> String {
+    override open func formatLogEntry(_ entry: LogEntry, message: String) -> String {
         var resultString = pattern
         if let regex = try? NSRegularExpression(pattern: PatternLogFormatter.grouping, options: [])
         {
-            let matches = regex.matchesInString(resultString, options:[], range: NSMakeRange(0, resultString.characters.count))
+            let matches = regex.matches(in: resultString, options:[], range: NSMakeRange(0, resultString.characters.count))
             for match in matches {
-                let content = (resultString as NSString).substringWithRange(match.range)
-                let range = content.rangeOfString("(")!
-                let replacementRange = range.startIndex.successor()..<content.endIndex.predecessor()
+                let content = (resultString as NSString).substring(with: match.range)
+                let range = content.range(of: "(")!
+                let replacementRange = content.index(after: range.lowerBound)..<content.index(before: content.endIndex)
+                
                 var subPattern = content[replacementRange]
-                subPattern = patternReplacement(entry, pattern: subPattern)
+                subPattern = patternReplacement(entry, message: message, pattern: subPattern)
                 subPattern = formatSpecifiers(content, replacement: subPattern)
-                resultString = (resultString as NSString).stringByReplacingCharactersInRange(match.range, withString: subPattern)
+                resultString = (resultString as NSString).replacingCharacters(in: match.range, with: subPattern)
             }
         }
-        return patternReplacement(entry, pattern: resultString)
+        return patternReplacement(entry, message: message, pattern: resultString)
     }
     
-    public func formatSpecifiers(expression: String, replacement:String) -> String {
+    open func formatSpecifiers(_ expression: String, replacement:String) -> String {
         var newReplacement = replacement
         if let regex = try? NSRegularExpression(pattern: PatternLogFormatter.lenghtPattern, options: [])
         {
-            let matches = regex.matchesInString(expression, options:[], range: NSMakeRange(0, expression.characters.count))
+            let matches = regex.matches(in: expression, options:[], range: NSMakeRange(0, expression.characters.count))
             if(matches.count > 0) {
                 var min:Int?
                 var max:Int?
-                let specifier = (expression as NSString).substringWithRange(matches[0].range)
-                let values = specifier.componentsSeparatedByString(".")
+                let specifier = (expression as NSString).substring(with: matches[0].range)
+                let values = specifier.components(separatedBy: ".")
                 if(values.count == 1) {
-                    if(specifier.containsString(".")) {
+                    if(specifier.contains(".")) {
                         max = Int(values[0])
                     } else {
                         min = Int(values[0])
@@ -123,13 +152,13 @@ public class PatternLogFormatter: BaseLogFormatter
                     min = Int(values[0])
                     max = Int(values[1])
                 }
-                if let minLenght = min where newReplacement.characters.count < abs(minLenght) {
+                if let minLenght = min, newReplacement.characters.count < abs(minLenght) {
                     let diff = abs(minLenght) - newReplacement.characters.count
                     for _ in 1...diff {
-                        (minLenght < 0 ? newReplacement+=" " : newReplacement.insert(" ", atIndex: newReplacement.startIndex))
+                        (minLenght < 0 ? newReplacement+=" " : newReplacement.insert(" ", at: newReplacement.startIndex))
                     }
                 }
-                if let maxLenght = max where newReplacement.characters.count > max {
+                if let maxLenght = max, newReplacement.characters.count > max {
                     if(maxLenght < 0) {
                         newReplacement = newReplacement.trunc(abs(maxLenght))
                     } else {
@@ -141,7 +170,7 @@ public class PatternLogFormatter: BaseLogFormatter
         return newReplacement
     }
     
-    public func patternReplacement(entry: LogEntry, pattern:String) -> String {
+    open func patternReplacement(_ entry: LogEntry, message: String, pattern:String) -> String {
         var offset:Int = 0
         var orderMatches:[Int:NSTextCheckingResult] = [:]
         var details: String = pattern
@@ -149,14 +178,14 @@ public class PatternLogFormatter: BaseLogFormatter
         {
             if let regex = try? NSRegularExpression(pattern: pat, options: [])
             {
-                let matches = regex.matchesInString(details, options:[], range: NSMakeRange(0, pattern.characters.count))
+                let matches = regex.matches(in: details, options:[], range: NSMakeRange(0, pattern.characters.count))
                 for match in matches {
                     orderMatches[match.range.location] = match
                 }
             }
         }
         
-        let sortedKeys = Array(orderMatches.keys).sort({ $0 < $1 })
+        let sortedKeys = Array(orderMatches.keys).sorted(by: { $0 < $1 })
         for key in sortedKeys {
             let patternExpresion = orderMatches[key]!.regularExpression!.pattern
             let range = orderMatches[key]!.resultByAdjustingRangesWithOffset(offset).range
@@ -171,7 +200,7 @@ public class PatternLogFormatter: BaseLogFormatter
                 case PatternLogFormatter.date:
                     replacement = stringRepresentationOfTimestamp(entry.timestamp)
                 case PatternLogFormatter.message:
-                    replacement = BaseLogFormatter.stringRepresentationForPayload(entry)
+                    replacement = message
                 case PatternLogFormatter.tread:
                     var threadID: UInt64 = 0
                     pthread_threadid_np(nil, &threadID)
@@ -191,17 +220,17 @@ public class PatternLogFormatter: BaseLogFormatter
                 break
             }
             
-            let expresion = (details as NSString).substringWithRange(range)
+            let expresion = (details as NSString).substring(with: range)
             replacement = formatSpecifiers(expresion, replacement: replacement)
             
-            details = (details as NSString).stringByReplacingCharactersInRange(range, withString: replacement)
+            details = (details as NSString).replacingCharacters(in: range, with: replacement)
             offset += (replacement.characters.count - range.length)
         }
         return details
     }
     
     
-    public static func getCaller(entry: LogEntry) -> String {
+    open static func getCaller(_ entry: LogEntry) -> String {
         var caller: String = ""
         caller += "\(entry.callingFunction)"
         caller += "(\(entry.callingFileLine):"
@@ -211,12 +240,12 @@ public class PatternLogFormatter: BaseLogFormatter
 }
 
 extension String {
-    func trunc(length: Int, trailing: String? = nil, end:Bool = true) -> String {
+    func trunc(_ length: Int, trailing: String? = nil, end:Bool = true) -> String {
         if self.characters.count > length {
             if end {
-                return self.substringToIndex(self.startIndex.advancedBy(length)) + (trailing ?? "")
+                return self.substring(to: self.characters.index(self.startIndex, offsetBy: length)) + (trailing ?? "")
             } else {
-                return self.substringFromIndex(self.startIndex.advancedBy(self.characters.count - length))
+                return self.substring(from: self.characters.index(self.startIndex, offsetBy: self.characters.count - length))
             }
         } else {
             return self

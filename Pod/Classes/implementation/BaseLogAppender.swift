@@ -25,7 +25,7 @@ Note that this implementation provides no mechanism for log file rotation
 or log pruning. It is the responsibility of the developer to keep the log
 file at a reasonable size.
 */
-public class BaseLogAppender: LogAppender
+open class BaseLogAppender: LogAppender
 {
     /** The name of the `LogRecorder`, which is constructed automatically
     based on the `filePath`. */
@@ -33,14 +33,14 @@ public class BaseLogAppender: LogAppender
 
     /** The `LogFormatter`s that will be used to format messages for
     the `LogEntry`s to be logged. */
-    public let formatters: [LogFormatter]
+    public var formatters: [LogFormatter]
 
     /** The list of `LogFilter`s to be used for filtering log messages. */
-    public let filters: [LogFilter]
+    public var filters: [LogFilter]
     
     /** The GCD queue that should be used for logging actions related to
     the receiver. */
-    public let queue: dispatch_queue_t
+    public let queue: DispatchQueue
 
     /**
     Initialize a new `LogRecorderBase` instance to use the given parameters.
@@ -53,12 +53,12 @@ public class BaseLogAppender: LogAppender
     {
         self.name = name
         self.formatters = formatters
-        self.queue = dispatch_queue_create(name, DISPATCH_QUEUE_SERIAL)
+        self.queue = DispatchQueue(label:name)
         self.filters = filters
     }
     
     public required convenience init?(configuration: Dictionary<String, AnyObject>) {
-        if let config = self.dynamicType.configuration(configuration) {
+        if let config = type(of: self).configuration(configuration: configuration) {
             self.init(name:config.name, formatters:config.formatters, filters:config.filters)
         } else {
             return nil
@@ -70,9 +70,9 @@ public class BaseLogAppender: LogAppender
             var returnConfig:(name: String, formatters: [LogFormatter], filters: [LogFilter])
             returnConfig.name = name
             
-            /// Appender Encoders
+            /// Appender Formatters
             returnConfig.formatters = []
-            if let encodersConfig = configuration[LogAppenderConstants.Encoders] as? Dictionary<String, AnyObject> {
+            if let encodersConfig = configuration[LogAppenderConstants.Encoder] as? Dictionary<String, AnyObject> {
                 if let patternsConfig = encodersConfig[PatternLogFormatterConstants.Pattern] as? Array<String> {
                     for pattern in patternsConfig {
                         if(pattern.isEmpty) {
@@ -81,12 +81,14 @@ public class BaseLogAppender: LogAppender
                             returnConfig.formatters.append(PatternLogFormatter(logFormat: pattern))
                         }
                     }
-                } else if let customFormatterConfigs = encodersConfig[LogAppenderConstants.Custom] as? Array<Dictionary<String, AnyObject> >{
+                }
+                
+                if let customFormatterConfigs = encodersConfig[LogAppenderConstants.Formatters] as? Array<Dictionary<String, AnyObject> >{
                     for formatterConfig in customFormatterConfigs {
                         if let className = formatterConfig[LogFormatterConstants.Class] as? String {
                             if let swiftClass = NSClassFromString(className) as? LogFormatter.Type {
-                                if let filter = swiftClass.init(configuration: formatterConfig) {
-                                    returnConfig.formatters.append(filter)
+                                if let formatter = swiftClass.init(configuration: formatterConfig) {
+                                    returnConfig.formatters.append(formatter)
                                 }
                             }
                         }
@@ -134,7 +136,7 @@ public class BaseLogAppender: LogAppender
                 when debug breakpoints are hit. It is not recommended for
                 production code.
     */
-    public func recordFormattedMessage(message: String, forLogEntry entry: LogEntry, currentQueue: dispatch_queue_t, synchronousMode: Bool)
+    public func recordFormattedMessage(_ message: String, forLogEntry entry: LogEntry, currentQueue: DispatchQueue, synchronousMode: Bool)
     {
         precondition(false, "Must override this")
     }

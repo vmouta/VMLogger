@@ -20,13 +20,13 @@ import Foundation
 import VMLogger
 
 /// Class to encapsulate the Log class to avoid carring around VMLogger dependence
-public class AppLogger : Log {
+open class AppLogger : Log {
     
-    public static func logger(identifier: String) -> AppLogger {
+    open static func logger(_ identifier: String) -> AppLogger {
         return super.getLogger(identifier) as! AppLogger
     }
     
-    public static func dump() {
+    open static func dump() {
         super.dumpLog()
     }
 }

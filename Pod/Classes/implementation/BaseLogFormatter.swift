@@ -24,19 +24,19 @@ protocol.
 
 This implementation is used by default if no other log formatters are specified.
 */
-public class BaseLogFormatter: LogFormatter
+open class BaseLogFormatter: LogFormatter
 {
-    private static let timestampFormatter: NSDateFormatter = {
-        let fmt = NSDateFormatter()
+    fileprivate static let timestampFormatter: DateFormatter = {
+        let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS zzz"
         return fmt
     }()
     
-    public let dateFormatter: NSDateFormatter
-    public let severityTagLenght: Int
-    public let identityTagLenght: Int
+    open let dateFormatter: DateFormatter
+    open let severityTagLenght: Int
+    open let identityTagLenght: Int
     
-    public init(dateFormatter: NSDateFormatter =  timestampFormatter, severityTagLenght: Int = 0, identityTagLenght: Int = 0) {
+    public init(dateFormatter: DateFormatter =  timestampFormatter, severityTagLenght: Int = 0, identityTagLenght: Int = 0) {
         self.dateFormatter = dateFormatter
         self.severityTagLenght = severityTagLenght
         self.identityTagLenght = identityTagLenght
@@ -55,7 +55,7 @@ public class BaseLogFormatter: LogFormatter
     :returns:       The formatted representation of `entry`. This particular
                     implementation will never return `nil`.
     */
-    public func formatLogEntry(entry: LogEntry) -> String? {
+    open func formatLogEntry(_ entry: LogEntry, message: String) -> String? {
         precondition(false, "Must override this")
         return nil
     }
@@ -73,7 +73,7 @@ public class BaseLogFormatter: LogFormatter
     
     :returns:   The string representation of `filePath` and `line`.
     */
-    public static func stringRepresentationForCallingFile(filePath: String, line: Int) -> String
+    open static func stringRepresentationForCallingFile(_ filePath: String, line: Int) -> String
     {
         let file = (filePath as NSString).pathComponents.last ?? "(unknown)"
         return "\(file):\(line)"
@@ -92,7 +92,7 @@ public class BaseLogFormatter: LogFormatter
      
      :returns:   The string representation of `filePath` and `line`.
      */
-    public static func stringRepresentationForFile(filePath: String) -> String
+    open static func stringRepresentationForFile(_ filePath: String) -> String
     {
         return (filePath as NSString).pathComponents.last ?? "(unknown)"
     }
@@ -107,12 +107,12 @@ public class BaseLogFormatter: LogFormatter
     
     :returns:   The string representation of `entry`'s payload.
     */
-    public static func stringRepresentationForPayload(entry: LogEntry) -> String
+    open static func stringRepresentationForPayload(_ entry: LogEntry) -> String
     {
         switch entry.payload {
-        case .Trace:                return entry.callingFunction
-        case .Message(let msg):     return msg
-        case .Value(let value):     return stringRepresentationForValue(value)
+        case .trace:                return entry.callingFunction
+        case .message(let msg):     return msg
+        case .value(let value):     return stringRepresentationForValue(value)
         }
     }
 
@@ -128,7 +128,7 @@ public class BaseLogFormatter: LogFormatter
                 the return value of `stringRepresentationForValue(Any)` is
                 returned.
     */
-    public static func stringRepresentationForValue(value: Any?) -> String
+    open static func stringRepresentationForValue(_ value: Any?) -> String
     {
         if let value = value {
             return stringRepresentationForValue(value)
@@ -137,20 +137,20 @@ public class BaseLogFormatter: LogFormatter
         }
     }
     
-    public static func stringRepresentationForExec(closure: () -> ()) -> String
+    open static func stringRepresentationForExec(_ closure: () -> ()) -> String
     {
         closure()
         return "(Executed)"
     }
     
-    public static func stringRepresentationForMDC() -> String {
-        if NSThread.isMainThread() {
+    open static func stringRepresentationForMDC() -> String {
+        if Thread.isMainThread {
             return "[main] "
         } else {
-            if let threadName = NSThread.currentThread().name where threadName != "" {
+            if let threadName = Thread.current.name, threadName != "" {
                 return "[" + threadName + "] "
             } else {
-                return "[" + String(format:"%p", NSThread.currentThread()) + "] "
+                return "[" + String(format:"%p", Thread.current) + "] "
             }
         }
     }
@@ -165,7 +165,7 @@ public class BaseLogFormatter: LogFormatter
     
     :returns:   A string representation of `value`.
     */
-    public static func stringRepresentationForValue(value: Any) -> String
+    open static func stringRepresentationForValue(_ value: Any) -> String
     {
         let type = Mirror(reflecting: value).subjectType
 
@@ -209,7 +209,7 @@ public class BaseLogFormatter: LogFormatter
      
      :returns:   A string representation of the `severity` value.
      */
-    private static func stringRepresentation(string: String, lenght: Int, right: Bool = true) -> String
+    fileprivate static func stringRepresentation(_ string: String, lenght: Int, right: Bool = true) -> String
     {
         if(lenght > 0) {
             var str = string
@@ -223,8 +223,8 @@ public class BaseLogFormatter: LogFormatter
                     }
                 }
             } else {
-                let index: String.Index = string.startIndex.advancedBy(lenght)
-                str = string.substringToIndex(index)
+                let index: String.Index = string.characters.index(string.startIndex, offsetBy: lenght)
+                str = string.substring(to: index)
             }
         }
         return string
@@ -242,7 +242,7 @@ public class BaseLogFormatter: LogFormatter
      
      :returns:   A string representation of the `severity` value.
      */
-    public func stringRepresentationOfSeverity(severity: LogLevel) -> String
+    open func stringRepresentationOfSeverity(_ severity: LogLevel) -> String
     {
         return BaseLogFormatter.stringRepresentation(severity.description, lenght:severityTagLenght, right:false)
     }
@@ -259,7 +259,7 @@ public class BaseLogFormatter: LogFormatter
      
      :returns:   A string representation of the `severity` value.
      */
-    public func stringRepresentationOfIdentity(identity: String) -> String
+    open func stringRepresentationOfIdentity(_ identity: String) -> String
     {
         return BaseLogFormatter.stringRepresentation(identity, lenght:severityTagLenght, right:false)
     }
@@ -274,9 +274,9 @@ public class BaseLogFormatter: LogFormatter
     
     :returns:   The string representation of `timestamp`.
     */
-    public func stringRepresentationOfTimestamp(timestamp: NSDate) -> String
+    open func stringRepresentationOfTimestamp(_ timestamp: Date) -> String
     {
-        return dateFormatter.stringFromDate(timestamp)
+        return dateFormatter.string(from: timestamp)
     }
 
     /**
@@ -289,8 +289,20 @@ public class BaseLogFormatter: LogFormatter
     
     :returns:   The string representation of `threadID`.
     */
-    public static func stringRepresentationOfThreadID(threadID: UInt64) -> String
+    open static func stringRepresentationOfThreadID(_ threadID: UInt64) -> String
     {
         return NSString(format: "%08X", threadID) as String
+    }
+    
+    // MARK: - CustomDebugStringConvertible
+    open var debugDescription: String {
+        get {
+            let type = Mirror(reflecting: self).subjectType
+            var description: String = "\(type): \(self.dateFormatter), \(self.severityTagLenght), \(self.identityTagLenght)"
+            for level in LogLevel.allLevels {
+                description += "\n\t- \(stringRepresentationOfSeverity(level)) > None)"
+            }
+            return description
+        }
     }
 }

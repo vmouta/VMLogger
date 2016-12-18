@@ -27,13 +27,13 @@ System Log as well as the `stderr` console.
 Additional optional `LogRecorders` may be specified to record messages to
 other arbitrary types of data stores, such as files or HTTP endpoints.
 */
-public class RootLogConfiguration: BaseLogConfiguration
+open class RootLogConfiguration: BaseLogConfiguration
 {
-    public required convenience init(assignedLevel: LogLevel = .Info, appenders: [LogAppender] = [ConsoleLogAppender()], synchronousMode: Bool = false) {
+    public required convenience init(assignedLevel: LogLevel = .info, appenders: [LogAppender] = [ConsoleLogAppender()], synchronousMode: Bool = false) {
         self.init(identifier: RootLogConfiguration.ROOT_IDENTIFIER, assignedLevel: assignedLevel, parent: nil, appenders: appenders, synchronousMode: synchronousMode, additivity: false)
     }
     
-    private init(identifier: String, assignedLevel: LogLevel = .Info, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true) {
+    fileprivate init(identifier: String, assignedLevel: LogLevel = .info, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true) {
         super.init(identifier:identifier, assignedLevel:assignedLevel, parent:parent, appenders:appenders, synchronousMode:synchronousMode, additivity:additivity)
     } 
 }

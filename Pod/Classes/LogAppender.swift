@@ -20,10 +20,10 @@ import Foundation
 
 struct LogAppenderConstants {
     static let Name: String = "name"
-    static let Encoders: String = "encoders"
+    static let Encoder: String = "encoder"
     static let Filters: String = "filters"
     static let Class: String = "class"
-    static let Custom: String = "custom"
+    static let Formatters: String = "formatters"
 }
 
 // MARK: - LogAppender
@@ -56,7 +56,7 @@ public protocol LogAppender: CustomDebugStringConvertible {
      this queue. This is typically a serial queue because the underlying log
      implementation is usually single-threaded.
      */
-    var queue: dispatch_queue_t { get }
+    var queue: DispatchQueue { get }
     
     /**
      Called by the `LogReceptacle` to record the formatted log message.
@@ -77,7 +77,7 @@ public protocol LogAppender: CustomDebugStringConvertible {
      when debug breakpoints are hit. It is not recommended for
      production code.
      */
-    func recordFormattedMessage(message: String, forLogEntry entry: LogEntry, currentQueue: dispatch_queue_t, synchronousMode: Bool)
+    func recordFormattedMessage(_ message: String, forLogEntry entry: LogEntry, currentQueue: DispatchQueue, synchronousMode: Bool)
     
     /**
      constructor to be used by introspection

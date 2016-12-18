@@ -31,13 +31,20 @@
 			<string>server</string>
 		</dict>
 		<dict>
-			<key>colors</key>
-			<true/>
-			<key>encoders</key>
+			<key>emojies</key>
+			<string>books</string>
+			<key>encoder</key>
 			<dict>
 				<key>pattern</key>
 				<array>
 					<string>%.30d [%thread][%Caller] %-7p %-20.-20c - %m</string>
+				</array>
+				<key>formatters</key>
+				<array>
+					<dict>
+						<key>class</key>
+						<string>VMLogger.XcodeColorsLogFormatter</string>
+					</dict>
 				</array>
 			</dict>
 			<key>name</key>

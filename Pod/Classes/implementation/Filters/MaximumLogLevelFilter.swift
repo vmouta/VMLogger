@@ -22,7 +22,7 @@ import Foundation
 A `LogFilter` implementation that filters out any `LogEntry` with a 
 `LogSeverity` less than a specified value.
 */
-public class MaximumLogLevelFilter: LogLevelFilter
+open class MaximumLogLevelFilter: LogLevelFilter
 {
     /**
     Called to determine whether the given `LogEntry` should be recorded.
@@ -32,7 +32,7 @@ public class MaximumLogLevelFilter: LogLevelFilter
     :returns:   `true` if `entry.severity` is as or more severe than the
                 receiver's `severity` property; `false` otherwise.
     */
-    public override func shouldRecordLogEntry(entry: LogEntry) -> Bool
+    open override func shouldRecordLogEntry(_ entry: LogEntry) -> Bool
     {
         return entry.logLevel <= severity
     }

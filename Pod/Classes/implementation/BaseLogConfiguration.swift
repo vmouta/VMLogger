@@ -28,45 +28,40 @@ System Log as well as the `stderr` console.
 Additional optional `LogRecorders` may be specified to record messages to
 other arbitrary types of data stores, such as files or HTTP endpoints.
 */
-public class BaseLogConfiguration: LogConfiguration
+open class BaseLogConfiguration: LogConfiguration
 {
-    public static let ROOT_IDENTIFIER: String = "root"
-    public static let DOT: String = "."
+    open static let ROOT_IDENTIFIER: String = "root"
+    open static let DOT: String = "."
     
-    public let identifier: String
+    open let identifier: String
 
-    public let additivity: Bool
+    open let additivity: Bool
     
     /** The assigned `LogLevel` supported by the configuration. */
-    public var assignedLevel: LogLevel?
+    open var assignedLevel: LogLevel?
     
     /** The minimum `LogLevel` supported by the configuration. */
-    public var effectiveLevel: LogLevel
+    open var effectiveLevel: LogLevel
 
     /** The list of `LogRecorder`s to be used for recording messages to the 
     underlying logging facility. */
-    public let appenders: [LogAppender]
+    open let appenders: [LogAppender]
 
     /** A flag indicating when synchronous mode should be used for the
     configuration. */
-    public let synchronousMode: Bool
+    open let synchronousMode: Bool
     
-    public var parent: LogConfiguration?
+    open var parent: LogConfiguration?
     
-    public var children: [LogConfiguration] {
+    open var children: [LogConfiguration] {
         return Array(childrenDic.values)
     }
     
     internal var childrenDic: [String : LogConfiguration] = [:]
     
-    public convenience init(identifier: String, parent: LogConfiguration, appenders: [LogAppender] = [], synchronousMode: Bool = false, additivity: Bool = true)
+    public convenience init(identifier identifier: String, parent: LogConfiguration, appenders: [LogAppender] = [], synchronousMode: Bool = false, additivity: Bool = true)
     {
         self.init(identifier: identifier, assignedLevel: nil, parent: parent, appenders: appenders, synchronousMode: synchronousMode, additivity: additivity)
-    }
-    
-    public convenience init(identifier: String, assignedLevel: LogLevel?, parent: LogConfiguration, appenders: [LogAppender], synchronousMode: Bool , additivity: Bool)
-    {
-        self.init(identifier: identifier, assignedLevel: assignedLevel, parent: parent, appenders: appenders, synchronousMode: synchronousMode, additivity: additivity)
     }
     
     /**
@@ -93,7 +88,7 @@ public class BaseLogConfiguration: LogConfiguration
      
     :param:     additivity
     */
-    internal init(identifier: String, assignedLevel: LogLevel?, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true)
+    public init(identifier identifier: String, assignedLevel: LogLevel?, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true)
     {
         self.identifier = identifier
         self.additivity = additivity
@@ -101,7 +96,7 @@ public class BaseLogConfiguration: LogConfiguration
         self.appenders = appenders
         self.synchronousMode = synchronousMode
         self.parent = parent
-        self.effectiveLevel = assignedLevel ?? parent?.effectiveLevel ??  .Info
+        self.effectiveLevel = assignedLevel ?? parent?.effectiveLevel ??  .info
     }
     
     internal func isRootLogger() ->Bool {
@@ -110,10 +105,10 @@ public class BaseLogConfiguration: LogConfiguration
     }
     
     // If child already exist the the grandchild of the child to add will be copied
-    public func addChildren(child: LogConfiguration, copyGrandChildren:Bool = true)
+    open func addChildren(_ child: LogConfiguration, copyGrandChildren:Bool = true)
     {
         child.setParent(self)
-        if let oldChild = self.childrenDic[child.identifier] where copyGrandChildren == true {
+        if let oldChild = self.childrenDic[child.identifier], copyGrandChildren == true {
             for grandChildren in oldChild.children {
                 child.addChildren(grandChildren, copyGrandChildren: false)
             }
@@ -121,19 +116,19 @@ public class BaseLogConfiguration: LogConfiguration
         self.childrenDic[child.identifier] = child
     }
     
-    public func getChildren(name: String) -> LogConfiguration?
+    open func getChildren(_ name: String) -> LogConfiguration?
     {
         return self.childrenDic[name]
     }
     
-    public func setParent(parent: LogConfiguration) {
+    open func setParent(_ parent: LogConfiguration) {
         self.parent = parent
     }
     
-    public func fullName() -> String
+    open func fullName() -> String
     {
         var name: String
-        if let parent = self.parent where self.parent?.identifier != BaseLogConfiguration.ROOT_IDENTIFIER {
+        if let parent = self.parent, self.parent?.identifier != BaseLogConfiguration.ROOT_IDENTIFIER {
             name = parent.fullName() + BaseLogConfiguration.DOT + self.identifier
         } else {
             name = self.identifier
@@ -141,7 +136,7 @@ public class BaseLogConfiguration: LogConfiguration
         return name
     }
     
-    public func details() -> String
+    open func details() -> String
     {
         var details: String = "\n"
         if let assigned = self.assignedLevel {
@@ -157,7 +152,7 @@ public class BaseLogConfiguration: LogConfiguration
     }
 
     // MARK: - DebugPrintabl
-    public var debugDescription: String {
+    open var debugDescription: String {
         get {
             let description: String = "\(Mirror(reflecting:self).subjectType) [\(assignedLevel)-\(effectiveLevel)][\(additivity)] \(identifier) - \n \(childrenDic)\r"
             return description

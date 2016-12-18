@@ -24,18 +24,18 @@ protocol.
 
 This implementation is used by default if no other log formatters are specified.
 */
-public class DefaultLogFormatter: BaseLogFormatter
+open class DefaultLogFormatter: BaseLogFormatter
 {
-    public var showThreadID: Bool = false;
-    public var showLogIdentifier: Bool = false;
-    public var showLogLevel: Bool = true;
-    public var showDate: Bool = true;
-    public var showMessage: Bool = false;
+    open var showThreadID: Bool = false;
+    open var showLogIdentifier: Bool = false;
+    open var showLogLevel: Bool = true;
+    open var showDate: Bool = true;
+    open var showMessage: Bool = false;
     
-    public var showThreadName: Bool = false;
-    public var showFunctionName: Bool = true;
-    public var showFileName: Bool = true;
-    public var showLineNumber: Bool = true;
+    open var showThreadName: Bool = false;
+    open var showFunctionName: Bool = true;
+    open var showFileName: Bool = true;
+    open var showLineNumber: Bool = true;
 
     
     /**
@@ -71,7 +71,7 @@ public class DefaultLogFormatter: BaseLogFormatter
      :returns:       The formatted representation of `entry`. This particular
      implementation will never return `nil`.
      */
-    override public func formatLogEntry(entry: LogEntry) -> String? {
+    override open func formatLogEntry(_ entry: LogEntry, message: String) -> String? {
         
         var extendedDetails: String = ""
         if showDate {
@@ -107,7 +107,6 @@ public class DefaultLogFormatter: BaseLogFormatter
         if showThreadID {
             extendedDetails += BaseLogFormatter.stringRepresentationOfThreadID(entry.callingThreadID)
         }
-    
-        return "\(extendedDetails)> \(BaseLogFormatter.stringRepresentationForPayload(entry))"
+        return "\(extendedDetails)> \(message)"
     }
 }
