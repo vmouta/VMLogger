@@ -34,6 +34,6 @@ open class RootLogConfiguration: BaseLogConfiguration
     }
     
     fileprivate init(identifier: String, assignedLevel: LogLevel = .info, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true) {
-        super.init(identifier:identifier, assignedLevel:assignedLevel, parent:parent, appenders:appenders, synchronousMode:synchronousMode, additivity:additivity)
+        super.init(identifier, assignedLevel:assignedLevel, parent:parent, appenders:appenders, synchronousMode:synchronousMode, additivity:additivity)
     } 
 }

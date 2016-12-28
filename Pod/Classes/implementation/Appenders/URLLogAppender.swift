@@ -144,7 +144,7 @@ open class URLLogAppend: BaseLogAppender
     */
     open override func recordFormattedMessage(_ message: String, forLogEntry entry: LogEntry, currentQueue: DispatchQueue, synchronousMode: Bool)
     {
-        var url = (self.method == "GET" ? "\(self.url)?log=\(Data(message.utf8).base64EncodedString())" : self.url);
+        let url = (self.method == "GET" ? "\(self.url)?log=\(Data(message.utf8).base64EncodedString())" : self.url);
         let URL = Foundation.URL(string: url)!
         var URLRequest = Foundation.URLRequest(url: URL)
         URLRequest.httpMethod = self.method
@@ -154,6 +154,7 @@ open class URLLogAppend: BaseLogAppender
         request(URLRequest)
     }
     
+    @discardableResult
     open func request(_ URLRequest: URLRequestConvertible) -> Request {
         return manager.request(URLRequest).response { response in
             print("Request: \(response.request)")

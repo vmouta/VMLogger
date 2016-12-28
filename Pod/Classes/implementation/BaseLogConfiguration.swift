@@ -59,9 +59,9 @@ open class BaseLogConfiguration: LogConfiguration
     
     internal var childrenDic: [String : LogConfiguration] = [:]
     
-    public convenience init(identifier identifier: String, parent: LogConfiguration, appenders: [LogAppender] = [], synchronousMode: Bool = false, additivity: Bool = true)
+    public convenience init(_ identifier: String, parent: LogConfiguration, appenders: [LogAppender] = [], synchronousMode: Bool = false, additivity: Bool = true)
     {
-        self.init(identifier: identifier, assignedLevel: nil, parent: parent, appenders: appenders, synchronousMode: synchronousMode, additivity: additivity)
+        self.init(identifier, assignedLevel: nil, parent: parent, appenders: appenders, synchronousMode: synchronousMode, additivity: additivity)
     }
     
     /**
@@ -88,7 +88,7 @@ open class BaseLogConfiguration: LogConfiguration
      
     :param:     additivity
     */
-    public init(identifier identifier: String, assignedLevel: LogLevel?, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true)
+    public init(_ identifier: String, assignedLevel: LogLevel?, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true)
     {
         self.identifier = identifier
         self.additivity = additivity

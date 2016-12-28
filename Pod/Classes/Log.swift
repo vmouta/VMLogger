@@ -286,11 +286,11 @@ open class Log: BaseLogConfiguration {
                 }
             }
         }
-        super.init(identifier: identifier, assignedLevel:logLevel, parent:parent, appenders:appenders, synchronousMode:synchronous, additivity:additivity)
+        super.init(identifier, assignedLevel:logLevel, parent:parent, appenders:appenders, synchronousMode:synchronous, additivity:additivity)
     }
     
     public required init(_ identifier: String, parent: LogConfiguration){
-        super.init(identifier: identifier, assignedLevel:nil, parent: parent, appenders: [], synchronousMode:parent.synchronousMode)
+        super.init(identifier, assignedLevel:nil, parent: parent, appenders: [], synchronousMode:parent.synchronousMode)
     }
     
     // MARK: - Convenience logging methods
