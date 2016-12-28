@@ -64,7 +64,7 @@ open class LogLevelFilter: LogFilter
      
      - returns: if configuration is correct a new LogFilter
      */
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         if let level = configuration[LogLevelFilterConstants.Level] as? String {
             self.init(severity:LogLevel(level: level))
         } else {

@@ -99,7 +99,7 @@ public struct LogChannel
                 the line number issuing the call to this function. **You should
                 not provide a value for this parameter.**
     */
-    public func message(_ logger: LogConfiguration, msg: String, function: String = #function, filePath: String = #file, fileLine: Int = #line)
+    public func message(_ logger: LogConfiguration, msg: String, userInfo: [String: Any] = [:], function: String = #function, filePath: String = #file, fileLine: Int = #line)
     {
         var threadID: UInt64 = 0
         pthread_threadid_np(nil, &threadID)

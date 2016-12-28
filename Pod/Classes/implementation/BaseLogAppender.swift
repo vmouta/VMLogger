@@ -57,7 +57,7 @@ open class BaseLogAppender: LogAppender
         self.filters = filters
     }
     
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         if let config = type(of: self).configuration(configuration: configuration) {
             self.init(name:config.name, formatters:config.formatters, filters:config.filters)
         } else {
@@ -65,14 +65,14 @@ open class BaseLogAppender: LogAppender
         }
     }
     
-    public class func configuration(configuration: Dictionary<String, AnyObject>) -> (name: String, formatters: [LogFormatter], filters: [LogFilter])?  {
+    open class func configuration(configuration: Dictionary<String, Any>) -> (name: String, formatters: [LogFormatter], filters: [LogFilter])?  {
         if let name = configuration[LogAppenderConstants.Name] as? String {
             var returnConfig:(name: String, formatters: [LogFormatter], filters: [LogFilter])
             returnConfig.name = name
             
             /// Appender Formatters
             returnConfig.formatters = []
-            if let encodersConfig = configuration[LogAppenderConstants.Encoder] as? Dictionary<String, AnyObject> {
+            if let encodersConfig = configuration[LogAppenderConstants.Encoder] as? Dictionary<String, Any> {
                 if let patternsConfig = encodersConfig[PatternLogFormatterConstants.Pattern] as? Array<String> {
                     for pattern in patternsConfig {
                         if(pattern.isEmpty) {
@@ -83,7 +83,7 @@ open class BaseLogAppender: LogAppender
                     }
                 }
                 
-                if let customFormatterConfigs = encodersConfig[LogAppenderConstants.Formatters] as? Array<Dictionary<String, AnyObject> >{
+                if let customFormatterConfigs = encodersConfig[LogAppenderConstants.Formatters] as? Array<Dictionary<String, Any> >{
                     for formatterConfig in customFormatterConfigs {
                         if let className = formatterConfig[LogFormatterConstants.Class] as? String {
                             if let swiftClass = NSClassFromString(className) as? LogFormatter.Type {
@@ -99,7 +99,7 @@ open class BaseLogAppender: LogAppender
             }
             /// Appender Filters
             returnConfig.filters = []
-            if let filtersConfig = configuration[LogAppenderConstants.Filters] as? Array<Dictionary<String, AnyObject> > {
+            if let filtersConfig = configuration[LogAppenderConstants.Filters] as? Array<Dictionary<String, Any> > {
                 for filterConfig in filtersConfig {
                     if let className = filterConfig[LogFilterConstants.Class] as? String {
                         if let swiftClass = NSClassFromString(className) as? LogFilter.Type {
@@ -136,13 +136,13 @@ open class BaseLogAppender: LogAppender
                 when debug breakpoints are hit. It is not recommended for
                 production code.
     */
-    public func recordFormattedMessage(_ message: String, forLogEntry entry: LogEntry, currentQueue: DispatchQueue, synchronousMode: Bool)
+    open func recordFormattedMessage(_ message: String, forLogEntry entry: LogEntry, currentQueue: DispatchQueue, synchronousMode: Bool)
     {
         precondition(false, "Must override this")
     }
     
     // MARK: - CustomDebugStringConvertible
-    public var debugDescription: String {
+    open var debugDescription: String {
         get {
             return "\(Mirror(reflecting: self).subjectType): \(name)"
         }

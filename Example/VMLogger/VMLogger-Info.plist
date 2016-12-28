@@ -5,6 +5,19 @@
 	<key>APPENDERS</key>
 	<array>
 		<dict>
+			<key>name</key>
+			<string>server</string>
+			<key>class</key>
+			<string>VMLogger.URLLogAppend</string>
+			<key>url</key>
+			<string>https://testserver.something/log</string>
+			<key>method</key>
+			<string>POST</string>
+			<key>headers</key>
+			<dict>
+				<key>apikey</key>
+				<string>mykey</string>
+			</dict>
 			<key>filters</key>
 			<array>
 				<dict>
@@ -16,23 +29,12 @@
 					</array>
 				</dict>
 			</array>
-			<key>headers</key>
-			<dict>
-				<key>apikey</key>
-				<string>mykey</string>
-			</dict>
-			<key>method</key>
-			<string>POST</string>
-			<key>url</key>
-			<string>https://testserver.something/log</string>
-			<key>class</key>
-			<string>VMLogger.URLLogAppend</string>
-			<key>name</key>
-			<string>server</string>
 		</dict>
 		<dict>
-			<key>emojies</key>
-			<string>books</string>
+			<key>name</key>
+			<string>console</string>
+			<key>class</key>
+			<string>VMLogger.ConsoleLogAppender</string>
 			<key>encoder</key>
 			<dict>
 				<key>pattern</key>
@@ -43,16 +45,28 @@
 				<array>
 					<dict>
 						<key>class</key>
-						<string>VMLogger.XcodeColorsLogFormatter</string>
+						<string>VMLogger.EmojieLogFormatter</string>
+						<key>emojies</key>
+						<string>books</string>
 					</dict>
 				</array>
 			</dict>
-			<key>name</key>
-			<string>console</string>
-			<key>class</key>
-			<string>VMLogger.ConsoleLogAppender</string>
 		</dict>
 		<dict>
+			<key>encoder</key>
+			<dict>
+				<key>pattern</key>
+				<array>
+					<string>%.30d [%thread][%Caller] %-7p %-20.-20c - %m</string>
+				</array>
+				<key>formatters</key>
+				<array>
+					<dict>
+						<key>class</key>
+						<string>VMLogger.ANSIColorLogFormatter</string>
+					</dict>
+				</array>
+			</dict>
 			<key>name</key>
 			<string>file</string>
 			<key>class</key>
@@ -61,14 +75,12 @@
 			<string>log.txt</string>
 		</dict>
 	</array>
+	<key>LOGGER_LEVEL</key>
+	<string>verbose</string>
 	<key>LOGGER_CONFIG</key>
 	<dict>
 		<key>VMLogger_Example</key>
 		<dict>
-			<key>appenders</key>
-			<array>
-				<string>console</string>
-			</array>
 			<key>level</key>
 			<string>Error</string>
 			<key>additivity</key>
@@ -76,14 +88,16 @@
 		</dict>
 		<key>VMLogger_Example.AppDelegate</key>
 		<dict>
+			<key>appenders</key>
+			<array>
+				<string>file</string>
+			</array>
 			<key>level</key>
 			<string>info</string>
 			<key>additivity</key>
-			<true/>
+			<false/>
 		</dict>
 	</dict>
-	<key>LOGGER_LEVEL</key>
-	<string>verbose</string>
 	<key>LOGGER_APPENDERS</key>
 	<array>
 		<string>console</string>

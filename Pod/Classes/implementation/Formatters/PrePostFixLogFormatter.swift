@@ -23,7 +23,7 @@ open class PrePostFixLogFormatter: BaseLogFormatter {
     /// Internal cache of the postfix strings codes for each log level
     internal var postfixStrings: [LogLevel: String] = [:]
 
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         self.init()
     }
 

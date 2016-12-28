@@ -84,7 +84,7 @@ open class FileLogAppend: BaseLogAppender
         }
     }
 
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         guard let filePath = configuration[FileLogAppendContants.FileName] as?  String  else {
             return nil
         }

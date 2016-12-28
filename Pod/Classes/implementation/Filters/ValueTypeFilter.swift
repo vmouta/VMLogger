@@ -75,7 +75,7 @@ open class ValueTypeFilter: LogFilter
      
      - returns: if configuration is correct a new LogFilter
      */
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         if let types = configuration[ValueTypeFilterConstants.Types] as? [String] {
             self.init(types:types)
         } else {

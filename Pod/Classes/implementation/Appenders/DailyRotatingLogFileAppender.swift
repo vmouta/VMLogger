@@ -79,7 +79,7 @@ open class DailyRotatingLogFileAppender: BaseLogAppender
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
     }
 
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         fatalError("init(configuration:) has not been implemented")
     }
 

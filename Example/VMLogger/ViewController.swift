@@ -7,17 +7,17 @@
 //
 
 import UIKit
+import VMLogger
 
 class ViewController: UIViewController {
 
     internal static let logger = AppLogger.logger(NSStringFromClass(ViewController.classForCoder()))
-    
-    internal static let logger1 = AppLogger.logger("VMLogger_Example.ViewController.children.grandchildren")
+    internal static let loggerChildrenGrandchildren = AppLogger.logger("VMLogger_Example.ViewController.children.grandchildren")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        ViewController.logger1.error(self)
+        ViewController.loggerChildrenGrandchildren.error(self)
     }
 
     override func didReceiveMemoryWarning() {
@@ -27,6 +27,21 @@ class ViewController: UIViewController {
 
     @IBAction func dump(_ sender: AnyObject) {
         AppLogger.dump()
+    }
+    
+    @IBAction func printFile(_ sender: AnyObject) {
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let url = NSURL(fileURLWithPath: path)
+        let filePath = url.appendingPathComponent("log.txt")?.path
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: filePath!) {
+            print("***** FILE AVAILABLE ***** ")
+            if let readString = try? String(contentsOfFile: filePath!, encoding: String.Encoding.utf8) {
+                print(readString)
+            }
+        } else {
+            print("*****  FILE NOT AVAILABLE ***** ")
+        }
     }
 }
 

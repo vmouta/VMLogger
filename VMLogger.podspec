@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
     s.name             = "VMLogger"
-    s.version          = "0.4.0"
-    s.summary          = "A simple debug log BackLog kind Logger."
+    s.version          = "0.4.1"
+    s.summary          = "A simple debug log, BackLog kind Logger."
     s.description      = <<-DESC
                         Provides an extensible Swift-based logging API that is simple, lightweight and performant.
                         Based on CleanroomLogger and XCGLogger
@@ -19,5 +19,5 @@ Pod::Spec.new do |s|
     s.source_files = 'Pod/Classes/**/*'
 
     s.framework  = "Foundation"
-    s.dependency 'Alamofire'
+    s.dependency 'Alamofire' , '~> 4.2.0'
 end

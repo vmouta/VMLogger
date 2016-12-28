@@ -4,6 +4,7 @@
 [![Version](https://img.shields.io/cocoapods/v/VMLogger.svg?style=flat)](http://cocoapods.org/pods/VMLogger)
 [![License](https://img.shields.io/cocoapods/l/VMLogger.svg?style=flat)](http://cocoapods.org/pods/VMLogger)
 [![Platform](https://img.shields.io/cocoapods/p/VMLogger.svg?style=flat)](http://cocoapods.org/pods/VMLogger)
+[![Twitter](https://img.shields.io/badge/twitter-@vmouta-blue.svg?style=flat)](http://twitter.com/vmouta)
 
 ## Usage
 

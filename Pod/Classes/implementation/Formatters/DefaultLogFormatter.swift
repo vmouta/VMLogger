@@ -59,7 +59,7 @@ open class DefaultLogFormatter: BaseLogFormatter
         self.showThreadID = showThreadID
     }
     
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         fatalError("init(configuration:) has not been implemented")
     }
     

@@ -11,7 +11,7 @@
 /// An example log formatter to show how encryption could be used to secure log messages, in this case, we just Base64 encode them
 open class Base64LogFormatter: BaseLogFormatter {
     
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         self.init()
     }
     

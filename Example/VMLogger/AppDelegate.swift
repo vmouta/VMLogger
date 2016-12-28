@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let logger = AppLogger.logger(NSStringFromClass(AppDelegate.classForCoder()))
     
     var window: UIWindow?
+    
 
     override class func initialize() {
        
@@ -25,7 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //AppLogger.enable("debug")
         
         // Set log from default .plist file
-        AppLogger.enableFromFile()
+        //AppLogger.enableFromFile()
+        
+        // Set log from default .plist file
+        AppLogger.initialize()
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -35,21 +39,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         logger.verbose()
         ViewController.logger.verbose("verbose")
         AppLogger.verbose("verbose")
+        
+        // Debug
         logger.debug()
         ViewController.logger.debug("debug")
         AppLogger.debug("debug")
+        
+        // Info
         logger.info()
         ViewController.logger.info("info")
         AppLogger.info("info")
+        
+        // Warning
         logger.warning()
         ViewController.logger.warning("warning")
         AppLogger.warning("warning")
+        
+        //Error
         logger.error()
         ViewController.logger.error("error")
         AppLogger.error("error")
+        
+        // Severe
         logger.severe()
         ViewController.logger.severe("severe")
         AppLogger.severe("severe")
+        
+        //Event
         //ViewController.logger.event("severe")
         AppLogger.event("severe")
         

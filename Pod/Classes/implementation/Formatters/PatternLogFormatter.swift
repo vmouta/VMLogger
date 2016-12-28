@@ -97,7 +97,7 @@ open class PatternLogFormatter: BaseLogFormatter
         self.pattern = logFormat
     }
     
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         
         guard let pattern = configuration[PatternLogFormatterConstants.Pattern] as?  String  else {
             return nil

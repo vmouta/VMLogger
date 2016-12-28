@@ -230,7 +230,7 @@ open class ANSIColorLogFormatter: BaseLogFormatter {
         resetFormatting()
     }
     
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         self.init()
     }
 

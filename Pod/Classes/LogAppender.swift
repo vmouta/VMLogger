@@ -86,5 +86,5 @@ public protocol LogAppender: CustomDebugStringConvertible {
      
      - returns: if configuration is correct a new LogAppender
      */
-    init?(configuration: Dictionary<String, AnyObject>)
+    init?(configuration: Dictionary<String, Any>)
 }

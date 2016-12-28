@@ -85,7 +85,7 @@ public struct LogEntry {
      :param:     timestamp The time at which the log entry was created. Defaults
      to the current time if not specified.
      */
-    public init(logger: LogConfiguration, payload: Payload, logLevel: LogLevel, callingFunction: String, callingFilePath: String, callingFileLine: Int, callingThreadID: UInt64, timestamp: Date = Date()) {
+    public init(logger: LogConfiguration, payload: Payload, logLevel: LogLevel, userInfo: [String: Any] = [:], callingFunction: String, callingFilePath: String, callingFileLine: Int, callingThreadID: UInt64, timestamp: Date = Date()) {
         self.logger = logger
         self.payload = payload
         self.logLevel = logLevel
@@ -94,6 +94,6 @@ public struct LogEntry {
         self.callingFileLine = callingFileLine
         self.callingThreadID = callingThreadID
         self.timestamp = timestamp
-        self.userInfo = [:]
+        self.userInfo = userInfo
     }
 }

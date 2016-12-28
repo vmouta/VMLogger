@@ -36,14 +36,25 @@ rather not have to think about such details.
 */
 open class URLLogAppend: BaseLogAppender
 {
-    internal let url: String
+    public let url: String
 
-    internal let headers: Dictionary<String, String>
+    public let headers: Dictionary<String, String>
     
-    internal let method: String
+    public let method: String
     
-    internal let parameter: String?
+    public let parameter: String?
 
+    /* Important not use chached values if we want to log everything*/
+    let manager: Alamofire.SessionManager = {
+        //var defaultHeaders = Alamofire.SessionManager.defaultHTTPHeaders
+        //defaultHeaders += self.headers
+        
+        let configuration = URLSessionConfiguration.default
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        //configuration.httpAdditionalHeaders = defaultHeaders
+        return SessionManager(configuration: configuration)
+    }()
+    
     /**
     Attempts to initialize a new `FileLogRecorder` instance to use the
     given file path and log formatters. This will fail if `filePath` could
@@ -81,7 +92,7 @@ open class URLLogAppend: BaseLogAppender
         super.init(name:name, formatters: formatters, filters:filters)
     }
 
-    public required convenience init?(configuration: Dictionary<String, AnyObject>) {
+    public required convenience init?(configuration: Dictionary<String, Any>) {
         guard let config = type(of: self).URLLogConfiguration(configuration) else {
             return nil
         }
@@ -89,7 +100,7 @@ open class URLLogAppend: BaseLogAppender
         self.init(name:config.name, url:config.url, method:config.method, parameter:config.parameter, headers:config.headers, formatters:config.formatters, filters:config.filters)
     }
     
-    internal class func URLLogConfiguration(_ configuration: Dictionary<String, AnyObject>) -> (name: String, url:String, method:String, parameter:String?, headers: Dictionary<String, String>, formatters: [LogFormatter], filters: [LogFilter])?  {
+    open class func URLLogConfiguration(_ configuration: Dictionary<String, Any>) -> (name: String, url:String, method:String, parameter:String?, headers: Dictionary<String, String>, formatters: [LogFormatter], filters: [LogFilter])?  {
         
         guard let config = self.configuration(configuration: configuration) else {
             return nil
@@ -133,33 +144,31 @@ open class URLLogAppend: BaseLogAppender
     */
     open override func recordFormattedMessage(_ message: String, forLogEntry entry: LogEntry, currentQueue: DispatchQueue, synchronousMode: Bool)
     {
-        let URL = Foundation.URL(string: self.url)!
-        var URLRequest = NSMutableURLRequest(url: URL)
+        var url = (self.method == "GET" ? "\(self.url)?log=\(Data(message.utf8).base64EncodedString())" : self.url);
+        let URL = Foundation.URL(string: url)!
+        var URLRequest = Foundation.URLRequest(url: URL)
         URLRequest.httpMethod = self.method
-        switch URLRequest.httpMethod {
-            case "GET":
-                if parameter != nil {
-                    
-                    //TODO
-                    //URLRequest = try URLEncoding.queryString.encode(URLRequest as! URLRequestConvertible, with: [self.parameter!:message])
-                }
-                break
-            default:
-                URLRequest.httpBody = (message as NSString).data(using: String.Encoding.utf8.rawValue)
-                break
+        URLRequest.httpBody = Data(message.utf8)
+      
+        setRequestHeaders(&URLRequest)
+        request(URLRequest)
+    }
+    
+    open func request(_ URLRequest: URLRequestConvertible) -> Request {
+        return manager.request(URLRequest).response { response in
+            print("Request: \(response.request)")
+            print("Response: \(response.response)")
+            print("Error: \(response.error)")
+            
+            if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
+                print("Data: \(utf8Text)")
+            }
         }
-        
-        setRequestHeaders(URLRequest)
-        request(URLRequest as! URLRequestConvertible)
     }
     
-    internal func request(_ URLRequest: URLRequestConvertible) -> Request {
-        return Alamofire.request(URLRequest)
-    }
-    
-    internal func setRequestHeaders (_ request: NSMutableURLRequest) -> Void {
+    open func setRequestHeaders (_ request: inout URLRequest) {
         for key in self.headers.keys {
-            /* Todo add specific values about the app */
+            /* @TODO add specific values about the app */
             if let value = self.headers[key] {
                 request.addValue(value, forHTTPHeaderField: key)
             }

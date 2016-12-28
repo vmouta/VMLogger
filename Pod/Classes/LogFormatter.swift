@@ -45,5 +45,5 @@ public protocol LogFormatter: CustomDebugStringConvertible
      
      - returns: if configuration is correct a new LogFormatter
      */
-    init?(configuration: Dictionary<String, AnyObject>)
+    init?(configuration: Dictionary<String, Any>)
 }

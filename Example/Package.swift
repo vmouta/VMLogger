@@ -6,5 +6,6 @@ let package = Package(
     dependencies: [
         .Package(url: "https://github.com/vmouta/VMLogger.git",
                  majorVersion: 0)
-    ]
+    ],
+    exclude: ["Tests"]
 )

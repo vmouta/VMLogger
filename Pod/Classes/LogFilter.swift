@@ -44,5 +44,5 @@ public protocol LogFilter : CustomDebugStringConvertible
      
      - returns: if configuration is correct a new LogFilter
      */
-    init?(configuration: Dictionary<String, AnyObject>)
+    init?(configuration: Dictionary<String, Any>)
 }

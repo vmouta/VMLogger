@@ -60,9 +60,11 @@ open class Log: BaseLogConfiguration {
         }
     }
     
-    public static func enableFromFile(fileName: String = Log.LoggerInfoFile) {
+    @discardableResult
+    public static func enableFromFile(fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
         if let path = Bundle.main.path(forResource: fileName, ofType: "plist"), let dict = NSDictionary(contentsOfFile: path) {
             self.enable(dict)
+            return dict
         } else {
             ///  No zucred configuration file, set default values
             /// Logger Configuration
@@ -73,11 +75,13 @@ open class Log: BaseLogConfiguration {
             #endif
             Log.error("Log configuration file not found: \(fileName)")
         }
+        return nil
     }
 
     public static func enable(_ values: NSDictionary) {
         #if DEBUG
             var rootLevel: LogLevel = .debug
+           
         #else
             var rootLevel: LogLevel = .info
         #endif
@@ -86,7 +90,7 @@ open class Log: BaseLogConfiguration {
         var rootAppenders: [LogAppender] = []
         
         /// Appenders for the log
-        if let appendersConfig = values.value(forKey: Log.Appenders) as? Array<Dictionary<String, AnyObject> > {
+        if let appendersConfig = values.value(forKey: Log.Appenders) as? Array<Dictionary<String, Any> > {
             for appenderConfig in appendersConfig {
                 if let className = appenderConfig[LogAppenderConstants.Class] as? String {
                     if let swiftClass = NSClassFromString(className) as? LogAppender.Type {
@@ -119,9 +123,9 @@ open class Log: BaseLogConfiguration {
         Log.enable(root: RootLogConfiguration(assignedLevel:rootLevel, appenders:rootAppenders, synchronousMode:rootSynchronous), minimumSeverity:rootLevel)
         
         /// Logs Configuration
-        if let logsConfig = values.value(forKey: Log.LoggerConfig) as? Dictionary<String, AnyObject> {
+        if let logsConfig = values.value(forKey: Log.LoggerConfig) as? Dictionary<String, Any> {
             for (logName, configValue) in logsConfig {
-                if let configuration = configValue as? Dictionary<String, AnyObject> {
+                if let configuration = configValue as? Dictionary<String, Any> {
                     let currentChild = self.getLogger(logName)
                     if let parent = currentChild.parent {
                         let newChild = self.init(currentChild.identifier, parent: parent, allAppenders:appenders, configuration: configuration)
@@ -135,6 +139,8 @@ open class Log: BaseLogConfiguration {
                 }
             }
         }
+        
+        Log.verbose("Log Configuration:\n" + values.pretty)
     }
     
     /**
@@ -254,7 +260,7 @@ open class Log: BaseLogConfiguration {
         }
     }
     
-    public required init?(_ identifier: String, parent: LogConfiguration, allAppenders:[String:LogAppender], configuration: Dictionary<String,AnyObject>) {
+    public required init?(_ identifier: String, parent: LogConfiguration, allAppenders:[String:LogAppender], configuration: Dictionary<String,Any>) {
         var additivity = true
         var logLevel:LogLevel? = nil
         var appenders: [LogAppender] = []
@@ -554,3 +560,17 @@ open class Log: BaseLogConfiguration {
         }
     }
 }
+
+extension NSDictionary {
+    var pretty: String {
+        get {
+            if let stringData = try? JSONSerialization.data(withJSONObject: self, options: .prettyPrinted), let string = String(data: stringData, encoding: String.Encoding.utf8){
+                return string
+            }
+            return "Invalid File"
+        }
+    }
+}
+
+
+
