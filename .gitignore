@@ -1,5 +1,12 @@
 # OS X
+._*
+.Spotlight-V100
+.Trashes
 .DS_Store
+
+# Windows #
+Thumbs.db
+Desktop.ini
 
 # Xcode
 build/

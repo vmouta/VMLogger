@@ -18,6 +18,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         ViewController.loggerChildrenGrandchildren.error(self)
+        ViewController.logger.info(ViewController.loggerChildrenGrandchildren.fullName())
     }
 
     override func didReceiveMemoryWarning() {

@@ -157,12 +157,12 @@ open class URLLogAppend: BaseLogAppender
     @discardableResult
     open func request(_ URLRequest: URLRequestConvertible) -> Request {
         return manager.request(URLRequest).response { response in
-            print("Request: \(response.request)")
-            print("Response: \(response.response)")
-            print("Error: \(response.error)")
+            //print("Request: \(String(describing: response.request))")
+            //print("Response: \(String(describing: response.response))")
+            //print("Error: \(String(describing: response.error))")
             
-            if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
-                print("Data: \(utf8Text)")
+            if let data = response.data, let /*utf8Text*/ _ = String(data: data, encoding: .utf8) {
+                //print("Data: \(utf8Text)")
             }
         }
     }

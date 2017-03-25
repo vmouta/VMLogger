@@ -30,9 +30,6 @@ other arbitrary types of data stores, such as files or HTTP endpoints.
 */
 open class BaseLogConfiguration: LogConfiguration
 {
-    open static let ROOT_IDENTIFIER: String = "root"
-    open static let DOT: String = "."
-    
     open let identifier: String
 
     open let additivity: Bool
@@ -88,7 +85,7 @@ open class BaseLogConfiguration: LogConfiguration
      
     :param:     additivity
     */
-    public init(_ identifier: String, assignedLevel: LogLevel?, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true)
+    public required init(_ identifier: String, assignedLevel: LogLevel?, parent: LogConfiguration?, appenders: [LogAppender], synchronousMode: Bool = false, additivity: Bool = true)
     {
         self.identifier = identifier
         self.additivity = additivity
@@ -99,21 +96,20 @@ open class BaseLogConfiguration: LogConfiguration
         self.effectiveLevel = assignedLevel ?? parent?.effectiveLevel ??  .info
     }
     
-    internal func isRootLogger() ->Bool {
-        // only the root logger has a null parent
-        return parent == nil;
-    }
+    /// MARK: From LogConfiguration
     
     // If child already exist the the grandchild of the child to add will be copied
-    open func addChildren(_ child: LogConfiguration, copyGrandChildren:Bool = true)
+    open func addChildren(_ child: LogConfiguration, copyGrandChildren:Bool = false)
     {
         child.setParent(self)
+        self.childrenDic[child.identifier] = child
+        
         if let oldChild = self.childrenDic[child.identifier], copyGrandChildren == true {
             for grandChildren in oldChild.children {
                 child.addChildren(grandChildren, copyGrandChildren: false)
             }
         }
-        self.childrenDic[child.identifier] = child
+        
     }
     
     open func getChildren(_ name: String) -> LogConfiguration?
@@ -127,13 +123,7 @@ open class BaseLogConfiguration: LogConfiguration
     
     open func fullName() -> String
     {
-        var name: String
-        if let parent = self.parent, self.parent?.identifier != BaseLogConfiguration.ROOT_IDENTIFIER {
-            name = parent.fullName() + BaseLogConfiguration.DOT + self.identifier
-        } else {
-            name = self.identifier
-        }
-        return name
+        fatalError("Needs to be redifined")
     }
     
     open func details() -> String
@@ -154,7 +144,7 @@ open class BaseLogConfiguration: LogConfiguration
     // MARK: - DebugPrintabl
     open var debugDescription: String {
         get {
-            let description: String = "\(Mirror(reflecting:self).subjectType) [\(assignedLevel)-\(effectiveLevel)][\(additivity)] \(identifier) - \n \(childrenDic)\r"
+            let description: String = "\(Mirror(reflecting:self).subjectType) [\(String(describing: assignedLevel))-\(effectiveLevel)][\(additivity)] \(identifier) - \n \(childrenDic)\r"
             return description
         }
     }

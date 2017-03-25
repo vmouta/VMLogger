@@ -76,13 +76,13 @@
 		</dict>
 	</array>
 	<key>LOGGER_LEVEL</key>
-	<string>verbose</string>
+	<string>info</string>
 	<key>LOGGER_CONFIG</key>
 	<dict>
-		<key>VMLogger_Example</key>
+		<key>VMLogger_Example.ViewController.children</key>
 		<dict>
 			<key>level</key>
-			<string>Error</string>
+			<string>verbose</string>
 			<key>additivity</key>
 			<true/>
 		</dict>
