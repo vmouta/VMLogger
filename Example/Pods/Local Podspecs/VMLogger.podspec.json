@@ -17,14 +17,17 @@
   },
   "social_media_url": "https://twitter.com/vmouta",
   "platforms": {
-    "ios": "8.0"
+    "ios": "8.0",
+    "osx": "10.7",
+    "watchos": "2.0",
+    "tvos": "9.0"
   },
   "requires_arc": true,
   "source_files": "Pod/Classes/**/*",
   "frameworks": "Foundation",
   "dependencies": {
     "Alamofire": [
-
+      "~> 4.2.0"
     ]
   }
 }

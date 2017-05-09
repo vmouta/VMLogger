@@ -1,0 +1,6 @@
+framework module VMLogger {
+  umbrella header "VMLogger-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,13 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+use_frameworks!
+
+pod "VMLogger", :path => '../../VMLogger'
+target 'VMLogger_Example' do
+
+end
+
+target 'VMLogger_ExampleTests' do
+  pod "VMLogger", :path => '../../VMLogger'
+
+end

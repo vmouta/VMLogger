@@ -70,7 +70,7 @@ open class Log: RootLogConfiguration {
         ///  No zucred configuration file, set default values
         /// Logger Configuration
         #if DEBUG
-            Log.enable(.Debug)
+            Log.enable(assignedLevel: .debug)
         #else
             Log.enable()
         #endif
