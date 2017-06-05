@@ -5,6 +5,18 @@
 	<key>APPENDERS</key>
 	<array>
 		<dict>
+			<key>directorypath</key>
+			<string>logger/vasco</string>
+			<key>daystokeep</key>
+			<string>2</string>
+			<key>filenamedateformat</key>
+			<string>yyyy-MMM-dd&apos;.log&apos;</string>
+			<key>name</key>
+			<string>daily</string>
+			<key>class</key>
+			<string>VMLogger.DailyRotatingLogFileAppender</string>
+		</dict>
+		<dict>
 			<key>name</key>
 			<string>server</string>
 			<key>class</key>
@@ -57,7 +69,7 @@
 			<dict>
 				<key>pattern</key>
 				<array>
-					<string>%.30d [%thread][%Caller] %-7p %-20.-20c - %m</string>
+					<string>%.30d [%thread][%Caller] %-7p %-22.-22c - %m</string>
 				</array>
 				<key>formatters</key>
 				<array>
@@ -100,6 +112,7 @@
 	</dict>
 	<key>LOGGER_APPENDERS</key>
 	<array>
+		<string>daily</string>
 		<string>console</string>
 	</array>
 </dict>

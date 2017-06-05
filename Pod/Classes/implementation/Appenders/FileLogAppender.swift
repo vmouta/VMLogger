@@ -50,9 +50,9 @@ open class FileLogAppend: BaseLogAppender
     
     :param:     formatters The `LogFormatter`s to use for the recorder.
     */
-    public convenience init?(filePath: String, formatters: [LogFormatter] = [DefaultLogFormatter()])
+    public convenience init?(filePath: String, formatters: [LogFormatter] = [DefaultLogFormatter()], filters:[LogFilter] = [])
     {
-        self.init(name: "FileLogRecorder[\(filePath)]", filePath: filePath, formatters: formatters)
+        self.init(name: "FileLogRecorder[\(filePath)]", filePath: filePath, formatters: formatters, filters: filters)
     }
     
     /**

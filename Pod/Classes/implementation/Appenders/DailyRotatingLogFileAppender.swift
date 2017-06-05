@@ -18,6 +18,16 @@
 
 import Foundation
 
+struct DailyRotatingLogFileAppendContants {
+    static let FilenameDateFormat: String = "filenamedateformat"
+    static let DaysToKeep: String = "daystokeep"
+    static let DirectoryPath: String = "directorypath"
+    
+    static let DefaultFilenameDateFormat: String = "yyyy-MM-dd'.log'"
+    static let DefaultDaysToKeep: String = "30"
+    static let DefaultDirectoryPath: String = "/logs"
+}
+
 /**
 A `LogRecorder` implementation that maintains a set of daily rotating log
 files, kept for a user-specified number of days.
@@ -37,10 +47,13 @@ open class DailyRotatingLogFileAppender: BaseLogAppender
     /** The filesystem path to a directory where the log files will be
     stored. */
     open let directoryPath: String
+    open let directoryURLPath: URL
+    
+    open let filenameDateFormat: String
 
-    fileprivate static let filenameFormatter: DateFormatter = {
+    fileprivate lazy var filenameFormatter: DateFormatter = {
         let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd'.log'"
+        fmt.dateFormat = self.filenameDateFormat
         return fmt
     }()
 
@@ -66,21 +79,51 @@ open class DailyRotatingLogFileAppender: BaseLogAppender
 
     :param:     formatters The `LogFormatter`s to use for the recorder.
     */
-    public init(daysToKeep: Int, directoryPath: String, formatters: [LogFormatter] = [DefaultLogFormatter()]) throws
+    public convenience init(daysToKeep: Int, directoryPath: String, formatters: [LogFormatter] = [DefaultLogFormatter()]) throws
     {
+        try self.init(name: "DailyRotatingLogFileRecorder[\(directoryPath)]", dateFormat: DailyRotatingLogFileAppendContants.DefaultFilenameDateFormat, daysToKeep:daysToKeep, directoryPath:directoryPath, formatters: formatters)
+    }
+    
+    public init(name: String, dateFormat:String, daysToKeep: Int, directoryPath: String, formatters: [LogFormatter] = [DefaultLogFormatter()], filters: [LogFilter] = []) throws
+    {
+        self.filenameDateFormat = dateFormat
         self.daysToKeep = daysToKeep
         self.directoryPath = directoryPath
-
-        super.init(name: "DailyRotatingLogFileRecorder[\(directoryPath)]", formatters: formatters)
-
+        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+        let url = URL(fileURLWithPath: paths[0], isDirectory: true)
+        self.directoryURLPath = url.appendingPathComponent(directoryPath)
+        
+        super.init(name: name, formatters: formatters, filters: filters)
+        
         // try to create the directory that will contain the log files
-        let url = URL(fileURLWithPath: directoryPath, isDirectory: true)
-
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+        //print(directoryURLPath)
+        try FileManager.default.createDirectory(at: directoryURLPath, withIntermediateDirectories: true, attributes: nil)
     }
 
     public required convenience init?(configuration: Dictionary<String, Any>) {
-        fatalError("init(configuration:) has not been implemented")
+        guard let config = type(of: self).DailyRotatingLogConfiguration(configuration) else {
+            return nil
+        }
+        
+        do {
+            try self.init(name:config.name, dateFormat:config.dateFormat, daysToKeep:config.daysToKeep, directoryPath:config.directoryPath, formatters:config.formatters, filters:config.filters)
+        } catch {
+            return nil
+        }
+    }
+    
+    open class func DailyRotatingLogConfiguration(_ configuration: Dictionary<String, Any>) -> (name: String, dateFormat:String, daysToKeep:Int, directoryPath:String, formatters: [LogFormatter], filters: [LogFilter])?  {
+        
+        guard let config = self.configuration(configuration: configuration) else {
+            return nil
+        }
+        
+        let dateFormat = configuration[DailyRotatingLogFileAppendContants.FilenameDateFormat] as?  String ?? DailyRotatingLogFileAppendContants.DefaultFilenameDateFormat
+        let daysToKeepString = configuration[DailyRotatingLogFileAppendContants.DaysToKeep] as?  String ?? DailyRotatingLogFileAppendContants.DefaultDaysToKeep
+        let daysToKeep = Int(daysToKeepString) ?? 1
+        let directoryPath = configuration[DailyRotatingLogFileAppendContants.DirectoryPath] as?  String ??  DailyRotatingLogFileAppendContants.DefaultDirectoryPath
+        
+        return (config.0, dateFormat, daysToKeep, directoryPath, config.1, config.2)
     }
 
     /**
@@ -91,13 +134,13 @@ open class DailyRotatingLogFileAppender: BaseLogAppender
     
     :returns:   The filename.
     */
-    open class func logFilenameForDate(_ date: Date)
+    open func logFilenameForDate(_ date: Date)
         -> String
     {
         return filenameFormatter.string(from: date)
     }
 
-    fileprivate class func fileLogRecorderForDate(_ date: Date, directoryPath: String, formatters: [LogFormatter])
+    fileprivate func fileLogRecorderForDate(_ date: Date, directoryPath: String, formatters: [LogFormatter])
         -> FileLogAppend?
     {
         let fileName = self.logFilenameForDate(date)
@@ -108,14 +151,14 @@ open class DailyRotatingLogFileAppender: BaseLogAppender
     fileprivate func fileLogRecorderForDate(_ date: Date)
         -> FileLogAppend?
     {
-        return type(of: self).fileLogRecorderForDate(date, directoryPath: directoryPath, formatters: formatters)
+        return self.fileLogRecorderForDate(date, directoryPath: directoryPath, formatters: formatters)
     }
 
     fileprivate func isDate(_ firstDate: Date, onSameDayAs secondDate: Date)
         -> Bool
     {
-        let firstDateStr = type(of: self).logFilenameForDate(firstDate)
-        let secondDateStr = type(of: self).logFilenameForDate(secondDate)
+        let firstDateStr = self.logFilenameForDate(firstDate)
+        let secondDateStr = self.logFilenameForDate(secondDate)
         return firstDateStr == secondDateStr
     }
 
@@ -167,23 +210,23 @@ open class DailyRotatingLogFileAppender: BaseLogAppender
         var date = Date()
         var filesToKeep = Set<String>()
         for _ in 0..<daysToKeep {
-            let filename = type(of: self).logFilenameForDate(date)
+            let filename = self.logFilenameForDate(date)
             filesToKeep.insert(filename)
             date = (cal as NSCalendar).date(byAdding: .day, value: -1, to: date, options: .wrapComponents)!
         }
 
         do {
             let fileMgr = FileManager.default
-            let filenames = try fileMgr.contentsOfDirectory(atPath: directoryPath)
+            let filenames = try fileMgr.contentsOfDirectory(at: directoryURLPath, includingPropertiesForKeys: nil)
 
             let pathsToRemove = filenames
-                .filter { return !$0.hasPrefix(".") }
-                .filter { return !filesToKeep.contains($0) }
-                .map { return (self.directoryPath as NSString).appendingPathComponent($0) }
+                .filter { return !$0.absoluteString.hasPrefix(".") }
+                .filter { return !filesToKeep.contains($0.lastPathComponent) }
+                .map { return $0 }
 
             for path in pathsToRemove {
                 do {
-                    try fileMgr.removeItem(atPath: path)
+                    try fileMgr.removeItem(at: path)
                 }
                 catch {
                     print("Error attempting to delete the unneeded file <\(path)>: \(error)")
@@ -191,7 +234,7 @@ open class DailyRotatingLogFileAppender: BaseLogAppender
             }
         }
         catch {
-            print("Error attempting to read directory at path <\(directoryPath)>: \(error)")
+            print("Error attempting to read directory at path <\(directoryURLPath.absoluteString)>: \(error)")
         }
     }
 }

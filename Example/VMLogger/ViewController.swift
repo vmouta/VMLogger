@@ -44,5 +44,13 @@ class ViewController: UIViewController {
             print("*****  FILE NOT AVAILABLE ***** ")
         }
     }
+    
+    @IBAction func printFileLocation(_ sender: AnyObject) {
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let url = NSURL(fileURLWithPath: path)
+        /// Got to command line and do a cat to the lo.txt file. (The default log configuration - print the log with colors)
+        /// For a better log use tail -f and the log.txt file so that you can have a nice colorfull log
+        print(url.absoluteString ?? "Something went wrong")
+    }
 }
 

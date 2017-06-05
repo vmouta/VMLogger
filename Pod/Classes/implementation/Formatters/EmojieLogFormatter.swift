@@ -20,6 +20,7 @@ struct EmojieLogFormatterConstants {
     static let EmojiesColors: String = "colors"
     static let EmojiesBooks: String = "books"
     static let EmojiesSmiles: String = "smiles"
+    static let EmojiesSimple: String = "simple"
 }
 
 // MARK: - EmojieLogFormatter
@@ -61,6 +62,14 @@ open class EmojieLogFormatter: PrePostFixLogFormatter {
                 self.apply(prefix: "😱😱😱 ", to: .error)
                 self.apply(prefix: "😡😡😡 ", to: .severe)
                 self.apply(prefix: "🤡🤡🤡 ", to: .event)
+            } else if(emojies == EmojieLogFormatterConstants.EmojiesSimple) {
+                self.apply(prefix: "⬜️⬜️⬜️ ", to: .verbose)
+                self.apply(prefix: "⬛️⬛️⬛️ ", to: .debug)
+                self.apply(prefix: "🔲🔲🔲 ", to: .info)
+                self.apply(prefix: "🔶🔶🔶 ", to: .warning)
+                self.apply(prefix: "🔴🔴🔴 ", to: .error)
+                self.apply(prefix: "⛔⛔️⛔️ ", to: .severe)
+                self.apply(prefix: "🔵🔵🔵 ", to: .event)
             }
         }
     }
