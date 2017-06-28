@@ -88,7 +88,7 @@ open class AppLogger : Log {
         AppLogger.verbose("appResignActive")
     }
     
-    @objc class func appBecomeActive() {
+    @objc class open func appBecomeActive() {
         AppLogger.verbose("appBecomeActive")
     }
 }

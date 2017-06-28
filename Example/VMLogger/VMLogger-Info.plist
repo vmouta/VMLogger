@@ -91,6 +91,13 @@
 	<string>info</string>
 	<key>LOGGER_CONFIG</key>
 	<dict>
+		<key>VMLogger_Example.ViewController.children.alex</key>
+		<dict>
+			<key>level</key>
+			<string>error</string>
+			<key>additivity</key>
+			<true/>
+		</dict>
 		<key>VMLogger_Example.ViewController.children</key>
 		<dict>
 			<key>level</key>

@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
 
-    override class func initialize() {
+    public override init() {
        
         // Enable default log level
         //AppLogger.enable()

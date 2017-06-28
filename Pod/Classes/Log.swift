@@ -48,7 +48,7 @@ open class Log: RootLogConfiguration {
     }
     
     @discardableResult
-    public static func enableFromFile(fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
+    public class func enableFromFile(fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let path = dir.appendingPathComponent(fileName)
             if let configuration = NSDictionary(contentsOf: path) {
@@ -61,7 +61,7 @@ open class Log: RootLogConfiguration {
     }
     
     @discardableResult
-    public static func enableFromMainBundleFile(_ fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
+    public class func enableFromMainBundleFile(_ fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
         if let path = Bundle.main.path(forResource: fileName, ofType: "plist"), let dict = NSDictionary(contentsOfFile: path) {
             self.enable(dict)
             return dict
@@ -78,7 +78,7 @@ open class Log: RootLogConfiguration {
         return nil
     }
 
-    public static func enable(_ values: NSDictionary) {
+    public class func enable(_ values: NSDictionary) {
         #if DEBUG
             var rootLevel: LogLevel = .debug
         #else
