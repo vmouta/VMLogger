@@ -59,7 +59,7 @@
 						<key>class</key>
 						<string>VMLogger.EmojieLogFormatter</string>
 						<key>emojies</key>
-						<string>books</string>
+						<string>simple</string>
 					</dict>
 				</array>
 			</dict>

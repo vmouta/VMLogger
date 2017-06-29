@@ -101,15 +101,14 @@ open class BaseLogConfiguration: LogConfiguration
     // If child already exist the the grandchild of the child to add will be copied
     open func addChildren(_ child: LogConfiguration, copyGrandChildren:Bool = false)
     {
-        child.setParent(self)
-        self.childrenDic[child.identifier] = child
-        
-        if let oldChild = self.childrenDic[child.identifier], copyGrandChildren == true {
+        if copyGrandChildren == true, let oldChild = self.childrenDic[child.identifier] {
             for grandChildren in oldChild.children {
                 child.addChildren(grandChildren, copyGrandChildren: false)
             }
         }
         
+        child.setParent(self)
+        self.childrenDic[child.identifier] = child
     }
     
     open func getChildren(_ name: String) -> LogConfiguration?

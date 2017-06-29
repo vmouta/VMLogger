@@ -12,13 +12,14 @@ import VMLogger
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    let logger = AppLogger.logger(NSStringFromClass(AppDelegate.classForCoder()))
+
+    let logger: AppLogger;
     
     var window: UIWindow?
     
 
     public override init() {
-       
+        
         // Enable default log level
         //AppLogger.enable()
         
@@ -30,6 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Set log from default .plist file
         AppLogger.initialize()
+        logger = AppLogger.logger(NSStringFromClass(AppDelegate.classForCoder()))
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {

@@ -48,37 +48,36 @@ open class Log: RootLogConfiguration {
     }
     
     @discardableResult
-    public class func enableFromFile(fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
+    public class func configureFromFile(fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let path = dir.appendingPathComponent(fileName)
             if let configuration = NSDictionary(contentsOf: path) {
-                Log.enable(configuration)
+                self.configure(configuration)
                 return configuration
             }
-            
         }
-        return enableFromMainBundleFile()
+        return configureFromMainBundleFile()
     }
     
     @discardableResult
-    public class func enableFromMainBundleFile(_ fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
+    public class func configureFromMainBundleFile(_ fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
         if let path = Bundle.main.path(forResource: fileName, ofType: "plist"), let dict = NSDictionary(contentsOfFile: path) {
-            self.enable(dict)
+            self.configure(dict)
             return dict
         }
         
         ///  No zucred configuration file, set default values
         /// Logger Configuration
         #if DEBUG
-            Log.enable(assignedLevel: .debug)
+            self.configure(assignedLevel: .debug)
         #else
-            Log.enable()
+            self.configure()
         #endif
-        Log.error("Log configuration file not found: \(fileName)")
+        self.error("Log configuration file not found: \(fileName)")
         return nil
     }
 
-    public class func enable(_ values: NSDictionary) {
+    public class func configure(_ values: NSDictionary) {
         #if DEBUG
             var rootLevel: LogLevel = .debug
         #else
@@ -134,15 +133,15 @@ open class Log: RootLogConfiguration {
                     parent.addChildren(newChild!, copyGrandChildren: true)
                 } else {
                     // Changing root configuration
-                    Log.warning("Trying to configure ROOT looger in logger childreen configuration. Reserved word, children ignored")
+                    self.warning("Trying to configure ROOT looger in logger childreen configuration. Reserved word, children ignored")
                 }
             } else {
-                Log.error("Log configuration for \(logName) is not valid. Dictionary<String, Any> is required")
+                self.error("Log configuration for \(logName) is not valid. Dictionary<String, Any> is required")
             }
         }
         
-        Log.enable(root: root, minimumSeverity:rootLevel)
-        Log.verbose("Log Configuration:\n" + values.pretty)
+        self.configure(root: root, minimumSeverity:rootLevel)
+        self.verbose("Log Configuration:\n" + values.pretty)
     }
     
     /**
@@ -163,15 +162,15 @@ open class Log: RootLogConfiguration {
      help ensure that messages send prior to hitting a breakpoint
      will appear in the console when the breakpoint is hit.
      */
-    public static func enable(assignedLevel: LogLevel = .info, synchronousMode: Bool = false)
+    public class func configure(assignedLevel: LogLevel = .info, synchronousMode: Bool = false)
     {
         let root = self.init(RootLogConfiguration.ROOT_IDENTIFIER, assignedLevel: assignedLevel, parent: nil, appenders: [ConsoleLogAppender()], synchronousMode: synchronousMode, additivity: false)
-        self.enable(root:root, minimumSeverity:root.effectiveLevel)
+        self.configure(root:root, minimumSeverity:root.effectiveLevel)
     }
     
-    public static func enable(root: RootLogConfiguration, minimumSeverity: LogLevel)
+    public class func configure(root: RootLogConfiguration, minimumSeverity: LogLevel)
     {
-        Log.start(root: root, logReceptacle: LogReceptacle(), minimumSeverity: minimumSeverity)
+        self.start(root: root, logReceptacle: LogReceptacle(), minimumSeverity: minimumSeverity)
     }
 
     public required init?(_ identifier: String, parent: LogConfiguration, allAppenders:[String:LogAppender], configuration: Dictionary<String,Any>) {
@@ -214,15 +213,15 @@ open class Log: RootLogConfiguration {
     // MARK: - Convenience logging methods
     // MARK: * Verbose
     public class func verbose(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.trace(logger: Log.sharedInstance, severity: .verbose, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.trace(logger: self.sharedInstance, severity: .verbose, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func verbose(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.message(logger: Log.sharedInstance, severity: .verbose, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.message(logger: self.sharedInstance, severity: .verbose, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func verbose(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.value(logger: Log.sharedInstance, severity: .verbose, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.value(logger: self.sharedInstance, severity: .verbose, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func verbose(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
@@ -239,15 +238,15 @@ open class Log: RootLogConfiguration {
     
     // MARK: * Debug
     public class func debug(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.trace(logger: Log.sharedInstance, severity: .debug, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.trace(logger: self.sharedInstance, severity: .debug, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func debug(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.message(logger: Log.sharedInstance, severity: .debug, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.message(logger: self.sharedInstance, severity: .debug, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func debug(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.value(logger: Log.sharedInstance, severity: .debug, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.value(logger: self.sharedInstance, severity: .debug, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func debug(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
@@ -264,15 +263,15 @@ open class Log: RootLogConfiguration {
     
     // MARK: * Info
     public class func info(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.trace(logger: Log.sharedInstance, severity: .info, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.trace(logger: self.sharedInstance, severity: .info, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func info(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.message(logger: Log.sharedInstance, severity: .info, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.message(logger: self.sharedInstance, severity: .info, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func info(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.value(logger: Log.sharedInstance, severity: .info, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.value(logger: self.sharedInstance, severity: .info, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func info(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
@@ -289,15 +288,15 @@ open class Log: RootLogConfiguration {
     
     // MARK: * Warning
     public class func warning(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.trace(logger: Log.sharedInstance, severity: .warning, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.trace(logger: self.sharedInstance, severity: .warning, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func warning(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.message(logger: Log.sharedInstance, severity: .warning, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.message(logger: self.sharedInstance, severity: .warning, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func warning(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.value(logger: Log.sharedInstance, severity: .warning, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.value(logger: self.sharedInstance, severity: .warning, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func warning(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
@@ -314,15 +313,15 @@ open class Log: RootLogConfiguration {
     
     // MARK: * Error
     public class func error(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.trace(logger: Log.sharedInstance, severity: .error, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.trace(logger: self.sharedInstance, severity: .error, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func error(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.message(logger: Log.sharedInstance, severity: .error, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.message(logger: self.sharedInstance, severity: .error, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func error(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.value(logger: Log.sharedInstance, severity: .error, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.value(logger: self.sharedInstance, severity: .error, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func error(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
@@ -339,15 +338,15 @@ open class Log: RootLogConfiguration {
     
     // MARK: * Severe
     public class func severe(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.trace(logger: Log.sharedInstance, severity: .severe, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.trace(logger: self.sharedInstance, severity: .severe, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func severe(_ message: String, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.message(logger: Log.sharedInstance, severity: .severe, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.message(logger: self.sharedInstance, severity: .severe, message: message, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public class func severe(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.value(logger: Log.sharedInstance, severity: .severe, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.value(logger: self.sharedInstance, severity: .severe, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func severe(functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
@@ -364,7 +363,7 @@ open class Log: RootLogConfiguration {
     
     //MARK: * Event
     public class func event(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        self.value(logger: Log.sharedInstance, severity: .event, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
+        self.value(logger: self.sharedInstance, severity: .event, value: value, function: functionName, filePath: fileName, fileLine: lineNumber)
     }
     
     public func event(_ value: Any?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
@@ -536,24 +535,24 @@ open class Log: RootLogConfiguration {
         description = description + " | classType: \(type(of:log))"
         switch(severity) {
             case .verbose:
-                Log.verbose(description)
+                self.verbose(description)
             case .debug:
-                Log.debug(description)
+                self.debug(description)
             case .info:
-                Log.info(description)
+                self.info(description)
             case .warning:
-                Log.warning(description)
+                self.warning(description)
             case .error:
-                Log.error(description)
+                self.error(description)
             case .severe:
-                Log.severe(description)
+                self.severe(description)
             case .event:
-                Log.event(description)
+                self.event(description)
             default:
                 break
         }
         for child in log.children {
-            Log.dumpLog(log: child, severity:severity)
+            self.dumpLog(log: child, severity:severity)
         }
     }
 }

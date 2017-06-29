@@ -33,7 +33,7 @@ open class AppLogger : Log {
     fileprivate static var eventDate: Date = startDate
     
     open static func initialize(_ fileName: String = AppLogger.AppLoggerInfoFile) {
-        if let _ = AppLogger.enableFromMainBundleFile() {
+        if let _ = AppLogger.configureFromMainBundleFile() {
             _ = eventDate /* avoid lazy initialization */
             let notificationCenter = NotificationCenter.default
             notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
