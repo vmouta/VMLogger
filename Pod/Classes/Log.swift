@@ -48,7 +48,7 @@ open class Log: RootLogConfiguration {
     }
     
     @discardableResult
-    public class func configureFromFile(fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
+    open class func configureFromFile(fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let path = dir.appendingPathComponent(fileName)
             if let configuration = NSDictionary(contentsOf: path) {
@@ -60,7 +60,7 @@ open class Log: RootLogConfiguration {
     }
     
     @discardableResult
-    public class func configureFromMainBundleFile(_ fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
+    open class func configureFromMainBundleFile(_ fileName: String = Log.LoggerInfoFile) -> NSDictionary? {
         if let path = Bundle.main.path(forResource: fileName, ofType: "plist"), let dict = NSDictionary(contentsOfFile: path) {
             self.configure(dict)
             return dict
@@ -77,7 +77,7 @@ open class Log: RootLogConfiguration {
         return nil
     }
 
-    public class func configure(_ values: NSDictionary) {
+    open class func configure(_ values: NSDictionary) {
         #if DEBUG
             var rootLevel: LogLevel = .debug
         #else
@@ -162,13 +162,13 @@ open class Log: RootLogConfiguration {
      help ensure that messages send prior to hitting a breakpoint
      will appear in the console when the breakpoint is hit.
      */
-    public class func configure(assignedLevel: LogLevel = .info, synchronousMode: Bool = false)
+    open class func configure(assignedLevel: LogLevel = .info, synchronousMode: Bool = false)
     {
         let root = self.init(RootLogConfiguration.ROOT_IDENTIFIER, assignedLevel: assignedLevel, parent: nil, appenders: [ConsoleLogAppender()], synchronousMode: synchronousMode, additivity: false)
         self.configure(root:root, minimumSeverity:root.effectiveLevel)
     }
     
-    public class func configure(root: RootLogConfiguration, minimumSeverity: LogLevel)
+    open class func configure(root: RootLogConfiguration, minimumSeverity: LogLevel)
     {
         self.start(root: root, logReceptacle: LogReceptacle(), minimumSeverity: minimumSeverity)
     }
@@ -206,7 +206,7 @@ open class Log: RootLogConfiguration {
         super.init(identifier, assignedLevel:assignedLevel, parent:parent, appenders:appenders, synchronousMode:synchronousMode, additivity:additivity)
     }
 
-    public class  func getLogger(_ identifier: String) -> LogConfiguration {
+    open class func getLogger(_ identifier: String) -> LogConfiguration {
         return self.sharedInstance.getChildren(identifier, type: self)
     }
     
@@ -522,7 +522,7 @@ open class Log: RootLogConfiguration {
         _ = enableOnce
     }
     
-    public static func dumpLog(log: LogConfiguration = Log.sharedInstance, severity: LogLevel = .info) {
+    open class func dumpLog(log: LogConfiguration = Log.sharedInstance, severity: LogLevel = .info) {
         var description = "assigned: "
         if let assignedLevel = log.assignedLevel?.description {
             description = description + String(assignedLevel.characters.first! as Character)

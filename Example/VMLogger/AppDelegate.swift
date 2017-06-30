@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //AppLogger.enableFromFile()
         
         // Set log from default .plist file
-        AppLogger.initialize()
+        AppLogger.configureFromFile()
         logger = AppLogger.logger(NSStringFromClass(AppDelegate.classForCoder()))
     }
     

@@ -32,8 +32,9 @@ open class AppLogger : Log {
     fileprivate static var startDate: Date = Date()
     fileprivate static var eventDate: Date = startDate
     
-    open static func initialize(_ fileName: String = AppLogger.AppLoggerInfoFile) {
-        if let _ = AppLogger.configureFromMainBundleFile() {
+    @discardableResult
+    override open class func configureFromFile(fileName: String = AppLogger.AppLoggerInfoFile) -> NSDictionary? {
+        if let dic = super.configureFromFile(fileName:fileName) {
             _ = eventDate /* avoid lazy initialization */
             let notificationCenter = NotificationCenter.default
             notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
@@ -41,7 +42,9 @@ open class AppLogger : Log {
             notificationCenter.addObserver(self, selector: #selector(appTerminate), name: NSNotification.Name.UIApplicationWillTerminate, object: nil)
             notificationCenter.addObserver(self, selector: #selector(appResignActive), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
             notificationCenter.addObserver(self, selector: #selector(appBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+            return dic
         }
+        return nil
     }
     
     open static func logger(_ identifier: String) -> AppLogger {
