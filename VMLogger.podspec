@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name             = "VMLogger"
-    s.version          = "0.5.4"
+    s.version          = "0.5.5"
     s.summary          = "A simple debug log, BackLog kind Logger."
     s.description      = <<-DESC
                         Provides an extensible Swift-based logging API that is simple, lightweight and performant.
