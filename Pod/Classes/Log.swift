@@ -56,7 +56,7 @@ open class Log: RootLogConfiguration {
                 return configuration
             }
         }
-        return configureFromMainBundleFile()
+        return configureFromMainBundleFile(fileName)
     }
     
     @discardableResult
