@@ -60,8 +60,8 @@ open class RootLogConfiguration: BaseLogConfiguration
             } else {
                 var tree: String? = nil
                 if let range = name.range(of: RootLogConfiguration.DOT) {
-                    tree = name.substring(from: range.upperBound)
-                    name = name.substring(to: range.lowerBound)
+                    tree = String(name[range.upperBound...])
+                    name = String(name[..<range.lowerBound])
                     if let child = parent.getChildren(name) {
                         parent = child
                         name = tree!

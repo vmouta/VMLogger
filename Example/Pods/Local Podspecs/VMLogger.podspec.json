@@ -24,10 +24,13 @@
   },
   "requires_arc": true,
   "source_files": "Pod/Classes/**/*",
+  "xcconfig": {
+    "SWIFT_VERSION": "4.0"
+  },
   "frameworks": "Foundation",
   "dependencies": {
     "Alamofire": [
-
+      "~> 4.5"
     ]
   }
 }

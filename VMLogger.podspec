@@ -22,6 +22,8 @@ Pod::Spec.new do |s|
 
     s.source_files = 'Pod/Classes/**/*'
 
+    s.xcconfig = { 'SWIFT_VERSION' => '4.0' }
+
     s.framework  = "Foundation"
     s.dependency 'Alamofire', '~> 4.5'
 end

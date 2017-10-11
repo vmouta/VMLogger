@@ -223,9 +223,15 @@ open class BaseLogFormatter: LogFormatter
                     }
                 }
             } else {
-                let index: String.Index = string.characters.index(string.startIndex, offsetBy: lenght)
-                str = string.substring(to: index)
+                if right==true {
+                    let index: String.Index = string.characters.index(string.endIndex, offsetBy:-lenght)
+                    str = String(string[index...])
+                } else {
+                    let index: String.Index = string.characters.index(string.startIndex, offsetBy:lenght)
+                    str = String(string[..<index])
+                }
             }
+            return str
         }
         return string
     }

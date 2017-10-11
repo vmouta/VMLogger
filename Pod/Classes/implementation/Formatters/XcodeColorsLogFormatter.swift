@@ -88,11 +88,19 @@ open class XcodeColorsLogFormatter: BaseLogFormatter {
 
 #if os(OSX)
         public init(color: NSColor) {
+        #if swift(>=4.0)
             if let colorSpaceCorrected = color.usingColorSpaceName(NSColorSpaceName.calibratedRGB) {
                 self.red = Int(colorSpaceCorrected.redComponent * 255)
                 self.green = Int(colorSpaceCorrected.greenComponent * 255)
                 self.blue = Int(colorSpaceCorrected.blueComponent * 255)
             }
+        #else
+            if let colorSpaceCorrected = color.usingColorSpaceName(NSCalibratedRGBColorSpace) {
+                self.red = Int(colorSpaceCorrected.redComponent * 255)
+                self.green = Int(colorSpaceCorrected.greenComponent * 255)
+                self.blue = Int(colorSpaceCorrected.blueComponent * 255)
+            }
+        #endif
         }
 #elseif os(iOS) || os(tvOS) || os(watchOS)
         public init(color: UIColor) {

@@ -122,8 +122,11 @@ open class PatternLogFormatter: BaseLogFormatter
                 let content = (resultString as NSString).substring(with: match.range)
                 let range = content.range(of: "(")!
                 let replacementRange = content.index(after: range.lowerBound)..<content.index(before: content.endIndex)
-                
-                var subPattern = String(content[replacementRange])
+                #if swift(>=4.0)
+                    var subPattern = String(content[replacementRange])
+                #else
+                    var subPattern = content[replacementRange]
+                #endif
                 subPattern = patternReplacement(entry, message: message, pattern: subPattern)
                 subPattern = formatSpecifiers(content, replacement: subPattern)
                 resultString = (resultString as NSString).replacingCharacters(in: match.range, with: subPattern)
@@ -188,7 +191,12 @@ open class PatternLogFormatter: BaseLogFormatter
         let sortedKeys = Array(orderMatches.keys).sorted(by: { $0 < $1 })
         for key in sortedKeys {
             let patternExpresion = orderMatches[key]!.regularExpression!.pattern
-            let range = orderMatches[key]!.adjustingRanges(offset: offset).range
+            #if swift(>=4.0)
+                let range = orderMatches[key]!.adjustingRanges(offset: offset).range
+            #else
+                let range = orderMatches[key]!.resultByAdjustingRangesWithOffset(offset).range
+            #endif
+            
             var replacement:String = ""
             switch(patternExpresion) {
                 case PatternLogFormatter.MDC:
@@ -243,9 +251,10 @@ extension String {
     func trunc(_ length: Int, trailing: String? = nil, end:Bool = true) -> String {
         if self.characters.count > length {
             if end {
-                return self.substring(to: self.characters.index(self.startIndex, offsetBy: length)) + (trailing ?? "")
+                let index = self.characters.index(self.startIndex, offsetBy: length)
+                return String(self[..<index]) + (trailing ?? "")
             } else {
-                return self.substring(from: self.characters.index(self.startIndex, offsetBy: self.characters.count - length))
+                return String(self[self.characters.index(self.startIndex, offsetBy: self.characters.count - length)...])
             }
         } else {
             return self

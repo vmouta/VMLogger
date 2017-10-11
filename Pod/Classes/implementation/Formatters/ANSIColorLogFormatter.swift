@@ -268,7 +268,7 @@ open class ANSIColorLogFormatter: BaseLogFormatter {
     open func colorize(level: LogLevel, custom: String) {
         if custom.hasPrefix(ANSIColorLogFormatter.escape) {
             formatStrings[level] = "\(custom)"
-            descriptionStrings[level] = "Custom: \(custom.substring(from: custom.index(custom.startIndex, offsetBy: 2)))"
+            descriptionStrings[level] = "Custom: \(String(custom[custom.index(custom.startIndex, offsetBy: 2)...]))"
         }
         else {
             formatStrings[level] = ANSIColorLogFormatter.escape + "\(custom)"
