@@ -23,5 +23,5 @@ Pod::Spec.new do |s|
     s.source_files = 'Pod/Classes/**/*'
 
     s.framework  = "Foundation"
-    s.dependency 'Alamofire'
+    s.dependency 'Alamofire', '~> 4.5'
 end
