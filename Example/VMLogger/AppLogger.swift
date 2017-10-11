@@ -27,7 +27,7 @@ open class AppLogger : Log {
     fileprivate static let BackgroundDuration: String = "BackgroundDuration"
     fileprivate static let Teriminated: String = "Terminated"
     
-    fileprivate static let AppLoggerInfoFile: String = "AppLogger-Info"
+    @_versioned internal static let AppLoggerInfoFile: String = "AppLogger-Info"
     
     fileprivate static var startDate: Date = Date()
     fileprivate static var eventDate: Date = startDate

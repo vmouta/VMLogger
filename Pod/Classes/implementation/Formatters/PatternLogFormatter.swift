@@ -123,7 +123,7 @@ open class PatternLogFormatter: BaseLogFormatter
                 let range = content.range(of: "(")!
                 let replacementRange = content.index(after: range.lowerBound)..<content.index(before: content.endIndex)
                 
-                var subPattern = content[replacementRange]
+                var subPattern = String(content[replacementRange])
                 subPattern = patternReplacement(entry, message: message, pattern: subPattern)
                 subPattern = formatSpecifiers(content, replacement: subPattern)
                 resultString = (resultString as NSString).replacingCharacters(in: match.range, with: subPattern)
@@ -188,7 +188,7 @@ open class PatternLogFormatter: BaseLogFormatter
         let sortedKeys = Array(orderMatches.keys).sorted(by: { $0 < $1 })
         for key in sortedKeys {
             let patternExpresion = orderMatches[key]!.regularExpression!.pattern
-            let range = orderMatches[key]!.resultByAdjustingRangesWithOffset(offset).range
+            let range = orderMatches[key]!.adjustingRanges(offset: offset).range
             var replacement:String = ""
             switch(patternExpresion) {
                 case PatternLogFormatter.MDC:

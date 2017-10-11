@@ -18,15 +18,15 @@
 
 import Foundation
 
-private let AllString: String = "All"
-private let VerboseString: String = "Verbose"
-private let DebugString: String = "Debug"
-private let InfoString: String = "Info"
-private let WarningString: String = "Warning"
-private let ErrorString: String = "Error"
-private let SevereString: String = "Severe"
-private let EventString: String = "Event"
-private let OffString: String = "OFF"
+@_versioned internal let AllString: String = "All"
+@_versioned internal let VerboseString: String = "Verbose"
+@_versioned internal let DebugString: String = "Debug"
+@_versioned internal let InfoString: String = "Info"
+@_versioned internal let WarningString: String = "Warning"
+@_versioned internal let ErrorString: String = "Error"
+@_versioned internal let SevereString: String = "Severe"
+@_versioned internal let EventString: String = "Event"
+@_versioned internal let OffString: String = "OFF"
 
 // MARK: - Enums
 public enum LogLevel: Int, Comparable, CustomStringConvertible {

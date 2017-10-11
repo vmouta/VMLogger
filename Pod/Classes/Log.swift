@@ -22,7 +22,7 @@ import Foundation
 // - The main logging class
 open class Log: RootLogConfiguration {
 
-    private static let LoggerInfoFile: String = "VMLogger-Info"
+    @_versioned internal static let LoggerInfoFile: String = "VMLogger-Info"
     private static let LoggerConfig: String = "LOGGER_CONFIG"
     private static let LoggerAppenders: String = "LOGGER_APPENDERS"
     private static let LoggerLevel: String = "LOGGER_LEVEL"
@@ -42,7 +42,7 @@ open class Log: RootLogConfiguration {
     
     public static var sharedInstance: RootLogConfiguration {
         if(_root == nil) {
-            start(root: RootLogConfiguration(), logReceptacle: LogReceptacle())
+            start(root: self.init(), logReceptacle: LogReceptacle())
         }
         return _root!;
     }
@@ -124,7 +124,7 @@ open class Log: RootLogConfiguration {
             rootChildren = rootLoggerChildren
         }
         
-        let root = RootLogConfiguration(assignedLevel:rootLevel, appenders:rootAppenders, synchronousMode:rootSynchronous)
+        let root = self.init(assignedLevel:rootLevel, appenders:rootAppenders, synchronousMode:rootSynchronous)
         for (logName, configValue) in rootChildren {
             if let configuration = configValue as? Dictionary<String, Any> {
                 let currentChild = root.getChildren(logName, type: self)
@@ -173,6 +173,14 @@ open class Log: RootLogConfiguration {
         self.start(root: root, logReceptacle: LogReceptacle(), minimumSeverity: minimumSeverity)
     }
 
+    override required public init() {
+        super.init()
+    }
+    
+    override required public init(assignedLevel: LogLevel = .info, appenders: [LogAppender] = [ConsoleLogAppender()], synchronousMode: Bool = false) {
+        super.init(assignedLevel: assignedLevel, appenders: appenders, synchronousMode: synchronousMode)
+    }
+    
     public required init?(_ identifier: String, parent: LogConfiguration, allAppenders:[String:LogAppender], configuration: Dictionary<String,Any>) {
         var additivity = true
         var logLevel:LogLevel? = nil

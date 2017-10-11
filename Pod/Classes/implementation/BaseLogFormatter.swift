@@ -26,7 +26,7 @@ This implementation is used by default if no other log formatters are specified.
 */
 open class BaseLogFormatter: LogFormatter
 {
-    fileprivate static let timestampFormatter: DateFormatter = {
+    @_versioned internal static let timestampFormatter: DateFormatter = {
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS zzz"
         return fmt
