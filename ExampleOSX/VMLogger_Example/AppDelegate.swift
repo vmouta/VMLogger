@@ -14,7 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     let logger = AppLogger.logger(NSStringFromClass(AppDelegate.classForCoder()))
     
-    override class func initialize() {
+    public override init() {
         
         // Enable default log level
         //AppLogger.enable()

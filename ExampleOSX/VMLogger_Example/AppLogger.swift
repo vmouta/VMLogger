@@ -27,18 +27,18 @@ open class AppLogger : Log {
     fileprivate static let BackgroundDuration: String = "BackgroundDuration"
     fileprivate static let Teriminated: String = "Terminated"
     
-    fileprivate static let AppLoggerInfoFile: String = "AppLogger-Info"
+    @_versioned internal static let AppLoggerInfoFile: String = "AppLogger-Info"
     
     fileprivate static var startDate: Date = Date()
     fileprivate static var eventDate: Date = startDate
     
     open static func initialize(_ fileName: String = AppLogger.AppLoggerInfoFile) {
-        if let _ = AppLogger.enableFromMainBundleFile() {
+        if let _ = AppLogger.configureFromMainBundleFile() {
             _ = eventDate /* avoid lazy initialization */
             let notificationCenter = NotificationCenter.default
-            notificationCenter.addObserver(self, selector: #selector(appTerminate), name: NSNotification.Name.NSApplicationWillTerminate, object: nil)
-            notificationCenter.addObserver(self, selector: #selector(appResignActive), name: NSNotification.Name.NSApplicationWillResignActive, object: nil)
-            notificationCenter.addObserver(self, selector: #selector(appBecomeActive), name: NSNotification.Name.NSApplicationDidBecomeActive, object: nil)
+            notificationCenter.addObserver(self, selector: #selector(appTerminate), name: NSApplication.willTerminateNotification, object: nil)
+            notificationCenter.addObserver(self, selector: #selector(appResignActive), name: NSApplication.willResignActiveNotification, object: nil)
+            notificationCenter.addObserver(self, selector: #selector(appBecomeActive), name: NSApplication.didBecomeActiveNotification, object: nil)
         }
     }
     
