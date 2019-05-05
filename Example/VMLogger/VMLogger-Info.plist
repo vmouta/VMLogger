@@ -119,6 +119,7 @@
 	</dict>
 	<key>LOGGER_APPENDERS</key>
 	<array>
+		<string>server</string>
 		<string>daily</string>
 		<string>console</string>
 	</array>
